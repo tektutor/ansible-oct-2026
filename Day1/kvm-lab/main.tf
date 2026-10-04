@@ -136,6 +136,13 @@ resource "libvirt_domain" "vm" {
     type_machine = "q35"
   }
 
+  # libvirt turns ACPI off unless you ask for it. Linux cloud images expect it,
+  # and "virsh shutdown" needs it for a clean power-off.
+  features = {
+    acpi = true
+    apic = {}
+  }
+
   devices = {
     disks = [
       {
@@ -200,6 +207,6 @@ resource "libvirt_domain" "vm" {
 data "libvirt_domain_interface_addresses" "vm" {
   for_each = var.vms
 
-  domain = libvirt_domain.vm[each.key].id
+  domain = libvirt_domain.vm[each.key].uuid
   source = "lease"
 }
