@@ -43,6 +43,25 @@ cd ~
 git clone https://github.com/tektutor/ansible-oct-2026.git
 cd ~/ansible-oct-2026/Day1
 tree kvm-lab
+sudo chown -R $USER: .
+sudo journalctl -k --since "30 min ago" | grep 'apparmor="DENIED"'
+echo '/var/lib/libvirt/images/** rwk,' | sudo tee -a /etc/apparmor.d/local/abstractions/libvirt-qemu
+sudo systemctl restart libvirtd
+echo '/var/lib/libvirt/images/** rwk,' | sudo tee -a /etc/apparmor.d/local/abstractions/libvirt-qemu
+sudo systemctl restart libvirtd
+sudo sed -i 's/^#\?security_driver = .*/security_driver = "none"/' /etc/libvirt/qemu.conf
+grep '^security_driver' /etc/libvirt/qemu.conf    # must print: security_driver = "none"
+sudo systemctl restart libvirtd
+
+echo 'security_driver = "none"' | sudo tee -a /etc/libvirt/qemu.conf
+sudo grep -n 'security_driver' /etc/libvirt/qemu.conf
+
+systemctl is-active libvirtd virtqemud
+sudo systemctl restart libvirtd      # if libvirtd is active
+sudo systemctl restart virtqemud     # if virtqemud is active
+terraform apply
+
+
 cd kvm-lab
 terraform init
 terraform apply
@@ -50,5 +69,9 @@ terraform output vm_ips
 terraform output -raw ansible_inventory > inventory
 ```
 
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/4165a8f5-f4c7-41ad-befe-469132368b4f" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/7b033167-ba81-47a9-ac0b-6ea5693c5176" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/d7f32b18-9e52-4c79-ba7a-ce5ed85022d3" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/e3433811-8a29-4777-9ecc-4084a085115e" />
 
 
