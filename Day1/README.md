@@ -26,7 +26,8 @@ sudo apt-get install terraform
 
 # Install KVM Hypervisor in Ubuntu
 sudo apt update
-sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients
+#sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients
+sudo apt install -y qemu-system-x86 libvirt-daemon-system libvirt-clients
 sudo usermod -aG libvirt $USER    # log out and log in again
 
 # A fresh install often has no "default" storage pool. Check first:
