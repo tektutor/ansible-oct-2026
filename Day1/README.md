@@ -43,12 +43,39 @@ cd ~
 git clone https://github.com/tektutor/ansible-oct-2026.git
 cd ~/ansible-oct-2026/Day1
 tree kvm-lab
+sudo chown -R $USER: .
+sudo journalctl -k --since "30 min ago" | grep 'apparmor="DENIED"'
+echo '/var/lib/libvirt/images/** rwk,' | sudo tee -a /etc/apparmor.d/local/abstractions/libvirt-qemu
+sudo systemctl restart libvirtd
+echo '/var/lib/libvirt/images/** rwk,' | sudo tee -a /etc/apparmor.d/local/abstractions/libvirt-qemu
+sudo systemctl restart libvirtd
+sudo sed -i 's/^#\?security_driver = .*/security_driver = "none"/' /etc/libvirt/qemu.conf
+grep '^security_driver' /etc/libvirt/qemu.conf    # must print: security_driver = "none"
+sudo systemctl restart libvirtd
+
+echo 'security_driver = "none"' | sudo tee -a /etc/libvirt/qemu.conf
+sudo grep -n 'security_driver' /etc/libvirt/qemu.conf
+
+systemctl is-active libvirtd virtqemud
+sudo systemctl restart libvirtd      # if libvirtd is active
+sudo systemctl restart virtqemud     # if virtqemud is active
+terraform apply
+
+
 cd kvm-lab
 terraform init
 terraform apply
 terraform output vm_ips
 terraform output -raw ansible_inventory > inventory
+ssh-keygen -R 192.168.122.237
+ssh-keygen -R 192.168.122.237
+ssh-keyscan -H 192.168.122.237 192.168.122.244 >> ~/.ssh/known_hosts
+ansible -i inventory all -m ping
 ```
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/3933e9e8-d406-4130-b0b0-029fa07711f5" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/a9932795-79ee-47b3-b5ae-48c96276cc47" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/d527e340-c115-4534-af96-48e78068f00a" />
+<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/b6d6acad-c50c-4c47-a282-b4be6e013a00" />
 
 
 
