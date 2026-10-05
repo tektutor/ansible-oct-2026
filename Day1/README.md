@@ -79,6 +79,14 @@ ansible -i inventory all -m ping
 
 
 ## Lab - Building a Custom Docker Image
+Under your linux home directory
+```
+cd ~
+mkdir -p CustomDockerAnsibleNodeImages/{ubuntu,rocky}
+cd CustomDockerAnsibleNodeImages/ubuntu
+touch Dockerfile
+```
+
 Create a file named Dockerfile with the below content
 
 ```
