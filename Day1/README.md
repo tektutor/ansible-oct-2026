@@ -117,3 +117,20 @@ cat Dockerfile
 docker build -t tektutor/ubuntu-ansible-node:1.0 .
 ```
 
+Let's generate key pair, accept all defaults by hitting enter when it prompts for options
+```
+ssh-keygen
+```
+
+Let's copy the public key as authorized_keys
+```
+cd ~/CustomDockerAnsibleNodeImages/ubuntu
+cp ~/.ssh/id_ed25519.pub authorized_keys
+ls -l
+```
+
+Let's build the custom docker image
+```
+cd ~/CustomDockerAnsibleNodeImages/ubuntu
+docker build -t tektutor/ubuntu-ansible-node:1.0 .
+```
