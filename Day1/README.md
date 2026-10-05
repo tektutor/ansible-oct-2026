@@ -78,4 +78,26 @@ ansible -i inventory all -m ping
 <img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/b6d6acad-c50c-4c47-a282-b4be6e013a00" />
 
 
+## Lab - Building a Custom Docker Image
+Create a file named Dockerfile with the below content
+
+```
+FROM ubuntu:24.04
+MAINTAINER Jeganathan Swaminathan <jegan@tektutor.org>
+
+RUN apt-get update && apt-get install -y openssh-server python3
+RUN mkdir -p /var/run/sshd
+RUN echo 'root:root' | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
+
+RUN mkdir -p /root/.ssh
+COPY authorized_keys /root/.ssh/authorized_keys
+
+EXPOSE 22
+EXPOSE 80 
+CMD ["/usr/sbin/sshd", "-D"]
+```
 
