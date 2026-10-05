@@ -148,6 +148,7 @@ List and see if the containers are running
 ```
 docker ps
 ```
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fd22317f-b57a-48ff-9585-8851280d6614" />
 
 Check if you are able to SSH into those containers
 ```
@@ -163,3 +164,5 @@ hostname -i
 ls
 exit
 ```
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/491a9e46-b45d-4dcf-97b4-97b0d815f5d8" />
+
