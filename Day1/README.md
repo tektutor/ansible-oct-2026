@@ -133,4 +133,5 @@ Let's build the custom docker image
 ```
 cd ~/CustomDockerAnsibleNodeImages/ubuntu
 docker build -t tektutor/ubuntu-ansible-node:1.0 .
+docker images | grep ansible
 ```
