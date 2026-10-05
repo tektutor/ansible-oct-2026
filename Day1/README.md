@@ -109,3 +109,11 @@ EXPOSE 80
 CMD ["/usr/sbin/sshd", "-D"]
 ```
 
+Building a custom ubuntu ansible node image
+```
+cd ~/CustomDockerAnsibleNodeImages/ubuntu
+cat Dockerfile
+
+docker build -t tektutor/ubuntu-ansible-node:1.0 .
+```
+
