@@ -140,8 +140,8 @@ docker images | grep ansible
 
 Let's create couple of ubuntu ansible node containers with our custom image
 ```
-docker run -d --name ubuntu1-jegan --hostname ubuntu-jegan -p 2001:22 -p 8001:80 tektutor/ubuntu-ansible-node:1.0
-docker run -d --name ubuntu1-jegan --hostname ubuntu-jegan -p 2001:22 -p 8001:80 tektutor/ubuntu-ansible-node:1.0
+docker run -d --name ubuntu1-jegan --hostname ubuntu1-jegan -p 2001:22 -p 8001:80 tektutor/ubuntu-ansible-node:1.0
+docker run -d --name ubuntu2-jegan --hostname ubuntu2-jegan -p 2002:22 -p 8002:80 tektutor/ubuntu-ansible-node:1.0
 ```
 
 List and see if the containers are running
