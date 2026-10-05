@@ -138,7 +138,8 @@ docker images | grep ansible
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0c6b5b1e-1081-4659-abf6-397002f321c3" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fa05edbb-7352-440a-a707-c1f0beab9f92" />
 
-Let's create couple of ubuntu ansible node containers with our custom image
+Let's create couple of ubuntu ansible node containers with our custom image,make sure you change the port 2001, 2002 to some other available port, also
+change the name and hostname of the containers
 ```
 docker run -d --name ubuntu1-jegan --hostname ubuntu1-jegan -p 2001:22 -p 8001:80 tektutor/ubuntu-ansible-node:1.0
 docker run -d --name ubuntu2-jegan --hostname ubuntu2-jegan -p 2002:22 -p 8002:80 tektutor/ubuntu-ansible-node:1.0
