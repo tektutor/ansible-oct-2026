@@ -77,6 +77,13 @@ ansible -i inventory all -m ping
 <img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/d527e340-c115-4534-af96-48e78068f00a" />
 <img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/b6d6acad-c50c-4c47-a282-b4be6e013a00" />
 
+## Lab - Cloning the TekTutor Training Repository ( one time activity )
+```
+cd ~
+git clone https://github.com/tektutor/ansible-oct-2026.git
+cd ansible-oct-2026
+```
+
 
 ## Lab - Building a Custom Docker Image
 Under your linux home directory
