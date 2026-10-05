@@ -135,3 +135,5 @@ cd ~/CustomDockerAnsibleNodeImages/ubuntu
 docker build -t tektutor/ubuntu-ansible-node:1.0 .
 docker images | grep ansible
 ```
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0c6b5b1e-1081-4659-abf6-397002f321c3" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fa05edbb-7352-440a-a707-c1f0beab9f92" />
