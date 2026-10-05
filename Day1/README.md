@@ -137,3 +137,29 @@ docker images | grep ansible
 ```
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0c6b5b1e-1081-4659-abf6-397002f321c3" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fa05edbb-7352-440a-a707-c1f0beab9f92" />
+
+Let's create couple of ubuntu ansible node containers with our custom image
+```
+docker run -d --name ubuntu1-jegan --hostname ubuntu-jegan -p 2001:22 -p 8001:80 tektutor/ubuntu-ansible-node:1.0
+docker run -d --name ubuntu1-jegan --hostname ubuntu-jegan -p 2001:22 -p 8001:80 tektutor/ubuntu-ansible-node:1.0
+```
+
+List and see if the containers are running
+```
+docker ps
+```
+
+Check if you are able to SSH into those containers
+```
+ssh -p 2001 root@localhost
+hostname
+hostname -i
+ls
+exit
+
+ssh -p 2002 root@localhost
+hostname
+hostname -i
+ls
+exit
+```
