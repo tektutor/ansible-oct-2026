@@ -167,3 +167,40 @@ exit
 ```
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/491a9e46-b45d-4dcf-97b4-97b0d815f5d8" />
 
+
+## Lab - Building a custom rocky linux docker image
+```
+cd ~/ansible-oct-2026
+git pull
+cd Day1/CustomDockerImageForAnsibleNodes/rocky
+cp ~/.ssh/id_ed25519.pub authorized_keys
+
+docker build -t tektutor/rocky-ansible-node:1.0 .
+```
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/b820e556-46b4-4f15-8965-c6cc4e94de62" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c3a94717-4534-4105-a83f-7b5d3b0a1dec" />
+
+
+Create couple of containers using the custom rocky linux docker image
+```
+docker run -d --name rocky1-jegan --hostname rocky1-jegan -p 2003:22 -p 8003:80 tektutor/rocky-ansible-node:1.0
+docker run -d --name rocky2-jegan --hostname rocky2-jegan -p 2004:22 -p 8004:80 tektutor/rocky-ansible-node:1.0
+```
+
+List and see if all 4 containers are running
+```
+docker ps
+```
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/49165b58-2b6d-410c-a723-2e5bc6ba6521" />
+
+See if we are able to SSH into rocky1-jegan and rocky2-jegan ansible node containers
+```
+ssh -p 2003 root@localhost
+exit
+
+ssh -p 2004 root@localhost
+exit
+```
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4a07e1d7-b403-42cf-89de-589f1c3a00e9" />
