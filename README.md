@@ -21,4 +21,16 @@ Environment="NO_PROXY=localhost,127.0.0.1"
 EOF
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+
+resolvectl status | head -12
+resolvectl query quay.io
+
+sudo ln -sf /run/systemd/resolve/resolv.conf /etc/resolv.conf
+cat /etc/resolv.conf
+
+sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
+sudo rm /etc/systemd/resolved.conf.d/dns.conf
+sudo systemctl restart systemd-resolved
+resolvectl query quay.io
 ```
