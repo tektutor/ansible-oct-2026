@@ -1,0 +1,5 @@
+[all]
+ubuntu1-jegan ansible_port=2001 ansible_user=root ansible_host=localhost ansible_private_key_file=~/.ssh/id_ed25519
+ubuntu2-jegan ansible_port=2002 ansible_user=root ansible_host=localhost ansible_private_key_file=~/.ssh/id_ed25519
+rocky1-jegan  ansible_port=2003 ansible_user=root ansible_host=localhost ansible_private_key_file=~/.ssh/id_ed25519
+rocky2-jegan  ansible_port=2004 ansible_user=root ansible_host=localhost ansible_private_key_file=~/.ssh/id_ed25519

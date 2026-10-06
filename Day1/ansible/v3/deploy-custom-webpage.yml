@@ -1,0 +1,3 @@
+
+- name: Deploy custom web page
+  template: src=index.html.j2 dest=/var/html/index.html

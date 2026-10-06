@@ -1,0 +1,3 @@
+- name: Customize nginx web server to use our custom folder while serving web page
+  when: ansible_distribution == "Rocky" and ansible_os_family == "RedHat"
+  copy: src=nginx.conf dest=/etc/nginx/nginx.conf

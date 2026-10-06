@@ -1,0 +1,6 @@
+- name: Restart nginx web server in Ubuntu servers to apply config changes
+  when: ansible_distribution == "Ubuntu" and ansible_os_family == "Debian"
+  service: 
+    name: nginx 
+    state: restarted
+    enabled: true

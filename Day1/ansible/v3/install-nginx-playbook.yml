@@ -1,0 +1,10 @@
+- name: This playbook will install nginx web servers on Linux servers
+  hosts: all 
+  vars:
+    greeting_message: "Welcome to DevOps!"
+  tasks:
+  - include_tasks: "install-nginx-{{ansible_distribution|lower}}.yml"
+  - include_tasks: common-nginx-tasks.yml
+  - include_tasks: "customize-nginx-in-{{ansible_distribution|lower}}.yml"
+  - include_tasks: deploy-custom-webpage.yml
+  - include_tasks: "restart-nginx-in-{{ansible_distribution|lower}}.yml"

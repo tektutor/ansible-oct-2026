@@ -1,0 +1,57 @@
+- name: This playbook will install nginx web servers on Linux servers
+  hosts: all 
+  vars:
+    greeting_message: "Welcome to DevOps!"
+  tasks:
+  - name: Install nginx in ubuntu ansible node
+    apt: name=nginx state=latest update_cache=yes
+    when: ansible_distribution == "Ubuntu" and ansible_os_family == "Debian"
+
+  - name: Install Extra Packages for Enterprise Linux (EPEL) 
+    when: ansible_distribution == "Rocky" and ansible_os_family == "RedHat"
+    yum: name=epel-release state=latest
+
+  - name: Install nginx in  Rocky ansible node
+    when: ansible_distribution == "Rocky" and ansible_os_family == "RedHat"
+    yum: name=nginx state=latest
+
+  - name: Create the custom web root folder
+    file: path=/var/html mode=0755 state=directory
+
+  - name: Retrieve the IP address of the ubuntu node
+    shell: "hostname -i "
+    register: ip
+
+  - debug: var=ip
+
+  - name: Customize nginx web server to use our custom folder while serving web page
+    copy: src=default dest=/etc/nginx/sites-available/default
+    when: ansible_distribution == "Ubuntu" and ansible_os_family == "Debian"
+
+  - name: Deploy custom web page
+    template: src=index.html.j2 dest=/var/html/index.html
+
+  - name: Restart nginx web server in Ubuntu servers to apply config changes
+    when: ansible_distribution == "Ubuntu" and ansible_os_family == "Debian"
+    service: 
+      name: nginx 
+      state: restarted
+      enabled: true
+
+  - name: Check if nginx server is already running in Rocky
+    when: ansible_distribution == "Rocky" and ansible_os_family == "RedHat"
+    shell: curl localhost
+    register: output
+    ignore_errors: yes
+
+  - name: Customize nginx web server to use our custom folder while serving web page
+    when: ansible_distribution == "Rocky" and ansible_os_family == "RedHat"
+    copy: src=nginx.conf dest=/etc/nginx/nginx.conf
+
+  - name: Stop the server if it is running already
+    when: ansible_distribution == "Rocky" and ansible_os_family == "RedHat" and output.rc == 0 
+    shell: nginx -s stop
+
+  - name: Start nginx web server
+    when: ansible_distribution == "Rocky" and ansible_os_family == "RedHat" and output.rc == 0 
+    shell: nginx
