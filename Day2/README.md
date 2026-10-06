@@ -70,3 +70,16 @@ ansible-doc template
 ```
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/78a687d9-ef3b-492e-bfb2-ff90f5ad412f" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2834a7de-7e09-4643-a8f2-ffc288fd14af" />
+
+## Lab - Running ansible ad-hoc commands
+```
+cd ~/ansible-oct-2026
+git pull
+cd Day1/ansible
+cat inventory
+docker ps
+
+ansible -i inventory all -m ping
+ansible -i inventory all -m shell -a "hostname"
+ansible -i inventory all -m shell -a "hostname -i"
+```
