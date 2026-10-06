@@ -89,4 +89,5 @@ ansible -i inventory all -m shell -a "hostname -i"
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e6f90c17-ce1d-44c4-967f-8702256dcd83" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/826fbf1c-59ff-4064-8d65-d2136acaa14a" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/10efff15-cc6a-42b7-9c0c-24e6b8eb9511" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/64b95179-8654-433d-8e0c-67cb0d4c5bfb" />
 
