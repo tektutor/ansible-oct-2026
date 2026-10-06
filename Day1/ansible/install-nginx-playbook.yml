@@ -1,10 +1,31 @@
-- name: This playbook will install nginx web servers
+- name: This playbook will install nginx web servers on Ubuntu servers
   hosts: ubuntu
   tasks:
   - name: Install nginx in ubuntu ansible node
     apt: name=nginx state=latest update_cache=yes
 
-  - name: Start nginx web server
+  - name: Start nginx web server in Ubuntu servers
     service: 
       name: nginx 
       state: started
+      enabled: true
+
+- name: This playbook will install nginx web servers on Rocky server
+  hosts: rocky 
+  tasks:
+  - name: Install Extra Packages for Enterprise Linux (EPEL) 
+    yum: name=epel-release state=latest
+
+  - name: Install nginx in  Rocky ansible node
+    yum: name=nginx state=latest
+
+  - name: Check if nginx server is already running
+    shell: curl localhost
+    register: output
+    ignore_errors: yes
+
+  - debug: var=output
+
+  - name: Start nginx web server
+    shell: nginx
+    when: output.rc != 0 
