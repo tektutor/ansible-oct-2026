@@ -48,3 +48,14 @@ exit
 ssh -p 2004 root@localhost
 exit
 ```
+
+## Lab - Finding ansible module help
+```
+ansible-doc -l
+ansible-doc apt
+ansible-doc service
+ansible-doc command
+ansible-doc yum
+ansible-doc file
+ansible-doc template
+```
