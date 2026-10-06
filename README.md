@@ -41,4 +41,18 @@ echo "--- unit";      systemctl show docker --property=Environment
 echo "--- direct";    curl -sS -I --max-time 10 --noproxy '*' https://quay.io/v2/ 2>&1 | head -2
 echo "--- via proxy"; curl -sS -I --max-time 10 https://quay.io/v2/ 2>&1 | head -3
 echo "--- pull";      docker pull quay.io/rockylinux/rockylinux:9 2>&1 | tail -3
+
+sudo rm /etc/systemd/system/docker.service.d/http-proxy.conf
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+docker info | grep -i proxy
+
+ping -c 2 8.8.8.8
+curl -sS -I --max-time 10 https://www.google.com | head -1
+curl -sS -I --max-time 10 http://archive.ubuntu.com | head -1
+
+gsettings get org.gnome.system.proxy mode
+gsettings get org.gnome.system.proxy.http host
+gsettings get org.gnome.system.proxy.http port
+grep -ri proxy /etc/environment /etc/apt/apt.conf.d/ 2>/dev/null
 ```
