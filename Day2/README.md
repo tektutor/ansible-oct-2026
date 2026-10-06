@@ -91,3 +91,24 @@ ansible -i inventory all -m shell -a "hostname -i"
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/10efff15-cc6a-42b7-9c0c-24e6b8eb9511" />
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/64b95179-8654-433d-8e0c-67cb0d4c5bfb" />
 
+
+## Lab - Running your first ansible playbook
+```
+cd ~/ansible-oct-2026
+git pull
+cd Day1/ansible
+cat inventory
+cat install-nginx-playbook.yml
+
+ansible-playbook -i inventory install-nginx-playbook.yml
+
+# Test
+curl http://localhost:8001
+curl http://localhost:8002
+curl http://localhost:8003
+curl http://localhost:8004
+
+```
+
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/28a35e5f-af85-4321-b315-3e0244fb8df7" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/4674c0d2-2a70-43f7-a456-41a18ccde9a5" />
