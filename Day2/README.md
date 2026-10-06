@@ -49,6 +49,12 @@ ssh -p 2004 root@localhost
 exit
 ```
 
+## Lab - Installing Ansible
+```
+sudo apt update && apt install -y ansible-core
+ansible --version
+```
+
 ## Lab - Finding ansible module help
 ```
 ansible-doc -l
