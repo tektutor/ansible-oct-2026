@@ -1,4 +1,4 @@
-FROM rockylinux:9
+FROM quay.io/rockylinux/rockylinux:9
 LABEL AUTHOR="Jeganathan Swaminathan"
 LABEL AUTHOR_EMAIL="jegan@tektutor.org"
 
