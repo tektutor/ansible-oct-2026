@@ -1,0 +1,10 @@
+- name: This playbook will install nginx web servers
+  hosts: ubuntu
+  tasks:
+  - name: Install nginx in ubuntu ansible node
+    apt: name=nginx state=latest update_cache=yes
+
+  - name: Start nginx web server
+    service: 
+      name: nginx 
+      state: started
