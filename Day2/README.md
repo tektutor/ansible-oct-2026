@@ -16,3 +16,35 @@ sudo virt-install \
   --graphics vnc,listen=127.0.0.1 \
   --noautoconsole
 ```
+
+## Lab - Connect to your Ubuntu terminal
+See if the custom docker images are present
+```
+docker images
+```
+
+See if the containers are there
+```
+docker ps -a
+```
+
+Start all 4 containers
+```
+docker start ubuntu1 ubuntu2 rocky1 rocky2
+docker ps
+```
+
+Check if you can SSH into those containers
+```
+ssh -p 2001 root@localhost
+exit
+
+ssh -p 2002 root@localhost
+exit
+
+ssh -p 2003 root@localhost
+exit
+
+ssh -p 2004 root@localhost
+exit
+```
