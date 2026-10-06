@@ -105,9 +105,6 @@ ansible-playbook -i inventory install-nginx-playbook.yml
 # Test
 curl http://localhost:8001
 curl http://localhost:8002
-curl http://localhost:8003
-curl http://localhost:8004
-
 ```
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/28a35e5f-af85-4321-b315-3e0244fb8df7" />
