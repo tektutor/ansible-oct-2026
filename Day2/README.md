@@ -80,6 +80,13 @@ cat inventory
 docker ps
 
 ansible -i inventory all -m ping
+ansible -i inventory ubuntu -m ping
+ansible -i inventory rocky -m ping
 ansible -i inventory all -m shell -a "hostname"
 ansible -i inventory all -m shell -a "hostname -i"
 ```
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/52b792ea-0c55-4edf-ac56-cf5efec56939" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e6f90c17-ce1d-44c4-967f-8702256dcd83" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/826fbf1c-59ff-4064-8d65-d2136acaa14a" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/10efff15-cc6a-42b7-9c0c-24e6b8eb9511" />
+
