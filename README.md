@@ -33,4 +33,12 @@ sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 sudo rm /etc/systemd/resolved.conf.d/dns.conf
 sudo systemctl restart systemd-resolved
 resolvectl query quay.io
+
+echo "--- dns";       resolvectl query quay.io 2>&1 | head -3
+echo "--- shell";     env | grep -i proxy
+echo "--- docker";    docker info 2>/dev/null | grep -i proxy
+echo "--- unit";      systemctl show docker --property=Environment
+echo "--- direct";    curl -sS -I --max-time 10 --noproxy '*' https://quay.io/v2/ 2>&1 | head -2
+echo "--- via proxy"; curl -sS -I --max-time 10 https://quay.io/v2/ 2>&1 | head -3
+echo "--- pull";      docker pull quay.io/rockylinux/rockylinux:9 2>&1 | tail -3
 ```
