@@ -57,7 +57,7 @@ ansible --version
 
 ## Lab - Finding ansible module help
 ```
-# List all ansible modules
+# List all ansible modules ( press letter q to come out )
 ansible-doc -l
 
 # Find details of a specific ansible module
