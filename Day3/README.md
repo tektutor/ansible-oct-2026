@@ -104,3 +104,99 @@ kubectl -n awx get secret awx-admin-password \
 
 <img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/0ac5dca2-d985-4dcc-aadd-ed5bfb2e8efe" />
 <img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/8c92ba4d-7ec0-45b2-baba-11d2fa03de3a" />
+
+## Lab - Configuring Windows 2022 Server to ensure ansible can manage it
+On Windows 2022 Server Powershell command promt
+```
+$password = Read-Host -AsSecureString "Password for ansible user"
+New-LocalUser -Name "ansible" -Password $password -PasswordNeverExpires
+Add-LocalGroupMember -Group "Administrators" -Member "ansible"
+```
+
+Enable WinRM and create HTTPS Listener
+```
+Enable-PSRemoting -Force
+
+$cert = New-SelfSignedCertificate `
+    -DnsName $env:COMPUTERNAME `
+    -CertStoreLocation Cert:\LocalMachine\My
+
+New-Item -Path WSMan:\localhost\Listener `
+    -Transport HTTPS `
+    -Address * `
+    -CertificateThumbPrint $cert.Thumbprint `
+    -Force
+
+New-NetFirewallRule -DisplayName "WinRM HTTPS" `
+    -Direction Inbound -Protocol TCP -LocalPort 5986 -Action Allow
+```
+
+Verify the listeners are running 
+```
+winrm enumerate winrm/config/Listener
+Test-NetConnection -ComputerName localhost -Port 5986
+```
+
+On your Ansible Control Node, run this to install WinRM and windows collections
+```
+pip install pywinrm
+ansible-galaxy collection install ansible.windows community.windows
+```
+
+Create an inventory.ini
+```
+[windows]
+win2022 ansible_host=192.168.1.50
+
+[windows:vars]
+ansible_user=ansible
+ansible_password=YourPasswordHere
+ansible_connection=winrm
+ansible_port=5986
+ansible_winrm_scheme=https
+ansible_winrm_transport=ntlm
+ansible_winrm_server_cert_validation=ignore
+```
+
+Test the connection
+```
+ansible windows -i inventory.ini -m ansible.windows.win_ping
+```
+
+Run your first ansible playbook targeting your windows server
+site.yml
+```
+---
+- name: Configure Windows Server 2022
+  hosts: windows
+  gather_facts: true
+  tasks:
+    - name: Install IIS
+      ansible.windows.win_feature:
+        name: Web-Server
+        state: present
+        include_management_tools: true
+
+    - name: Ensure IIS service runs
+      ansible.windows.win_service:
+        name: W3SVC
+        state: started
+        start_mode: auto
+```
+
+Run it from Ubuntu terminal
+```
+ansible-playbook -i inventory.ini site.yml
+```
+
+Troubleshooting Common failures
+<pre>
+- Connection timeout: a network firewall or cloud security group blocks port 5986.
+- "Access is denied" with a local account: remote UAC filtering strips the admin token. 
+</pre>
+
+Fix it with - Run this on your Windows 2022 Server Powershell prompt
+```
+New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System `
+    -Name LocalAccountTokenFilterPolicy -Value 1 -PropertyType DWord -Force
+```
