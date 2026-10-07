@@ -105,6 +105,31 @@ kubectl -n awx get secret awx-admin-password \
 <img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/0ac5dca2-d985-4dcc-aadd-ed5bfb2e8efe" />
 <img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/8c92ba4d-7ec0-45b2-baba-11d2fa03de3a" />
 
+In case, you wish to uninstall ( not required )
+```
+sudo /usr/local/bin/k3s-uninstall.sh
+sudo rm -rf /opt/awx
+sudo rm -f /usr/local/bin/k3s-install.sh
+grep -c "127.0.0.1:6443" ~/.kube/config
+rm ~/.kube/config
+unset KUBECONFIG
+sudo ufw delete allow from 10.42.0.0/16
+sudo ufw delete allow from 10.43.0.0/16
+sudo ufw delete allow 30080/tcp
+sudo ufw delete allow 30081/tcp
+
+# Optional
+sudo rm -f /usr/local/bin/kustomize
+sudo apt remove -y python3-kubernetes
+rm -rf ~/ansible-venv
+
+# Check everything is gone
+systemctl status k3s 2>&1 | head -2
+ls /var/lib/rancher /etc/rancher /opt/awx 2>&1
+sudo ss -ltnp | grep -E ":(6443|30080|30081)\b"
+ip link | grep -E "cni0|flannel"
+```
+
 ## Lab - Configuring Windows 2022 Server to ensure ansible can manage it
 On Windows 2022 Server Powershell command promt
 ```
@@ -199,4 +224,116 @@ Fix it with - Run this on your Windows 2022 Server Powershell prompt
 ```
 New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System `
     -Name LocalAccountTokenFilterPolicy -Value 1 -PropertyType DWord -Force
+```
+
+
+## Info - What are the different ways Windows Ansible Nodes can be authenticated 
+
+WinRM authentication options
+<pre>
+- Basic
+- Certificate
+- NTLM
+- Kerberos
+- CredSSP
+</pre>
+
+Basic authentication
+<pre>
+- Sends the username and password base64-encoded, so use it only over HTTPS (port 5986) and only in a lab
+- Windows disables it by default
+</pre>
+
+So, we need to enable it on the Windows Powershell prompt
+```
+Set-Item -Path WSMan:\localhost\Service\Auth\Basic -Value $true
+```
+
+In your ansible inventory, add this line
+```
+ansible_winrm_transport=basic
+```
+
+Certificate
+<pre>
+- Works like SSH key pairs
+- you map a client certificate to a local Windows account, and no password travels over the network
+- it requires HTTPS
+- one caution for Server 2022
+  - WinRM certificate authentication fails over TLS 1.3, which Server 2022 enables by default
+  - you must force TLS 1.2 for the WinRM listener or choose another method
+</pre>
+
+Run this on your Windows Powershell prompt
+```
+Set-Item -Path WSMan:\localhost\Service\Auth\Certificate -Value $true
+```
+
+In your ansible inventory, add these lines
+```
+ansible_winrm_transport=certificate
+ansible_winrm_cert_pem=/path/to/cert.pem
+ansible_winrm_cert_key_pem=/path/to/key.pem
+```
+
+NTLM
+<pre>
+- Enabled by default on Windows and needs no extra setup
+- It works for both local and domain accounts
+- It is an older protocol with weaker security than Kerberos, and it cannot delegate credentials, 
+  so tasks that reach a second server (a file share or SQL Server, for example) fail
+</pre>
+
+In the inventory
+```
+ansible_winrm_transport=ntlm
+```
+
+Kerberos
+<pre>
+- The recommended choice for domain-joined servers
+- It gives you mutual authentication and supports delegation
+- Your control node needs Kerberos libraries and a working /etc/krb5.conf, and ansible_host must be the server's FQDN, 
+  because Kerberos fails against IP addresses
+</pre>
+
+Install this on your Ansible Control Node
+```
+sudo apt install krb5-user libkrb5-dev python3-dev gcc    # Debian/Ubuntu
+pip install pywinrm[kerberos]
+```
+
+In the inventory
+```
+ansible_user=ansible@EXAMPLE.COM
+ansible_winrm_transport=kerberos
+ansible_winrm_kerberos_delegation=true    # only if you need double hop
+```
+
+CredSSP
+<pre>
+- Sends your credentials to the remote host, which then uses them to reach other servers
+- It solves the double hop problem for both local and domain accounts
+- The risk
+  - if an attacker compromises that host, they can capture the credentials
+  - Enable it only where you need it
+</pre>
+
+On Windows powershell prompt run this
+```
+Enable-WSManCredSSP -Role Server -Force
+```
+
+Install this on your ansible control node
+```
+pip install pywinrm[credssp]
+```
+
+To check, which authentication method your server supports/allows, run this on Windows Powershell prompt
+```
+winrm get winrm/config/Service/Auth
+```
+On your inventory
+```
+ansible_winrm_transport=credssp
 ```
