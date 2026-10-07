@@ -13,6 +13,7 @@ Install the tools
 ```
 sudo apt update
 sudo apt install -y curl unzip git python3-venv
+sudo apt install -y python3-pip python3-jsonschema python3-yaml
 ```
 
 Check the tools
@@ -51,7 +52,7 @@ free -g | sed -n 2p
 Render and check the files
 ```
 cd ~/ansible-oct-2026
-cd Day3/cd awx-lab
+cd Day3/awx-lab
 
 kustomize build k8s > /tmp/awx-rendered.yaml
 grep -c '^kind:' /tmp/awx-rendered.yaml
