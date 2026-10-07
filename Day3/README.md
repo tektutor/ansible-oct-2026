@@ -86,3 +86,21 @@ kubectl -n awx get pods
 kubectl -n awx get services
 ```
 
+Accessing AWX Dashboard on the web browser
+```
+http://localhost:30080
+# or Find the IP of the AWX machine to access from another machine
+sudo ufw allow 30080/tcp
+hostname -I | awk '{print $1}'
+http://192.168.200.46:30080
+```
+
+Find the password
+```
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+kubectl -n awx get secret awx-admin-password \
+  -o jsonpath='{.data.password}' | base64 -d; echo
+```
+
+<img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/0ac5dca2-d985-4dcc-aadd-ed5bfb2e8efe" />
+<img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/8c92ba4d-7ec0-45b2-baba-11d2fa03de3a" />
