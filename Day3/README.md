@@ -484,23 +484,6 @@ New-ItemProperty -Path $path -Name DisabledByDefault -Value 1 -PropertyType DWor
 Restart-Computer
 ```
 
-Read the password on the windows server on the Powershell
-```
-Get-LocalUser -Name ansible | Select-Object Name, Enabled, PasswordExpires, PasswordLastSet
-Get-LocalGroupMember -Group "Administrators"
-
-$password = Read-Host -AsSecureString "New password for ansible"
-Set-LocalUser -Name ansible -Password $password
-
-$cred = Get-Credential -UserName "ansible" -Message "Test"
-Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock { whoami }
-
-New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System `
-    -Name LocalAccountTokenFilterPolicy -Value 1 -PropertyType DWord -Force
-
-Restart-Service WinRM
-```
-
 On the Control node, update the inventory.ini
 ```
 [windows]
