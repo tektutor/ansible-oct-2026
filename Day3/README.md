@@ -5,7 +5,7 @@ Check if all the required files are present
 ```
 cd ~/ansible-oct-2026
 git pull
-cd Day3/cd awx-lab
+cd Day3/awx-lab
 ls -1 . k8s
 ```
 
@@ -103,7 +103,11 @@ kubectl -n awx get secret awx-admin-password \
 ```
 
 <img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/0ac5dca2-d985-4dcc-aadd-ed5bfb2e8efe" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2e6254af-5be7-4efa-a3b8-836fc26877bf" />
+
 <img width="1920" height="1124" alt="image" src="https://github.com/user-attachments/assets/8c92ba4d-7ec0-45b2-baba-11d2fa03de3a" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/fa844ab6-7e6a-4d1e-bd46-57dba978a81e" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/10709d01-84fc-4707-a177-821cfa3be340" />
 
 In case, you wish to uninstall ( not required )
 ```
