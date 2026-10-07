@@ -1,98 +1,85 @@
 # Day 3
 
 ## Lab - Installing Ansible Tower opensource variant (AWX)
-Install the Kubernetes cluster
+Check if all the required files are present
 ```
-mkdir -p ~/.kube
-sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
-sudo chown $USER: ~/.kube/config
-chmod 600 ~/.kube/config
-
-ansible-playbook -i localhost, -c local -K install-awx.yml \
-  -e kubeconfig=$HOME/.kube/config \
-  -e ansible_python_interpreter=/usr/bin/python3
+cd ~/ansible-oct-2026
+git pull
+cd Day3/cd awx-lab
+ls -1 . k8s
 ```
 
-Install the AWX
+Install the tools
 ```
-mkdir -p k8s
-
-cat > k8s/kustomization.yaml <<'EOF'
----
-# AWX Operator 2.19.1, the release that installs AWX 24.6.1
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: awx
-
-resources:
-  - github.com/ansible/awx-operator/config/default?ref=2.19.1
-  - awx-admin-secret.yaml
-  - awx.yaml
-
-images:
-  - name: quay.io/ansible/awx-operator
-    newTag: 2.19.1
-EOF
-
-cat > k8s/awx.yaml <<'EOF'
----
-apiVersion: awx.ansible.com/v1beta1
-kind: AWX
-metadata:
-  name: awx
-spec:
-  admin_user: admin
-  admin_password_secret: awx-admin-password
-  # Reach the web UI on port 30080 of the node
-  service_type: nodeport
-  nodeport_port: 30080
-  # Small lab sizes; the operator's defaults assume a bigger cluster
-  web_resource_requirements:
-    requests: {cpu: 250m, memory: 512Mi}
-  task_resource_requirements:
-    requests: {cpu: 250m, memory: 512Mi}
-  postgres_storage_requirements:
-    requests: {storage: 8Gi}
-EOF
-
-cat > k8s/awx-admin-secret.yaml <<'EOF'
----
-# Lab only: in a real setup, create this Secret from a vault, not from Git
-apiVersion: v1
-kind: Secret
-metadata:
-  name: awx-admin-password
-type: Opaque
-stringData:
-  password: Change-Me-Lab-2026
-EOF
-
-cat > k8s/awx-backup.yaml <<'EOF'
----
-# Back up the AWX database and secrets to a persistent volume
-apiVersion: awx.ansible.com/v1beta1
-kind: AWXBackup
-metadata:
-  name: awx-backup-lab
-  namespace: awx
-spec:
-  deployment_name: awx
-  backup_storage_requirements: 5Gi
-EOF
-
-cat > k8s/awx-restore.yaml <<'EOF'
----
-# Restore into a new AWX named awx-restored from a named backup
-apiVersion: awx.ansible.com/v1beta1
-kind: AWXRestore
-metadata:
-  name: awx-restore-lab
-  namespace: awx
-spec:
-  deployment_name: awx-restored
-  backup_name: awx-backup-lab
-EOF
-
-ls -1 k8s
+sudo apt update
+sudo apt install -y curl unzip git python3-venv
 ```
-<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/5527bf68-17b3-47eb-b4d2-4320b7edd4f1" />
+
+Check the tools
+```
+# Let's use ansible in virtual environment
+python3 -m venv ~/ansible-venv
+source ~/ansible-venv/bin/activate
+pip install "ansible-core>=2.21,<2.22" jsonschema
+ansible --version
+
+# Install Kubernetes collections
+ansible-galaxy collection install kubernetes.core
+ansible-galaxy collection list kubernetes.core
+
+# Install kustomize
+url=https://github.com/kubernetes-sigs/kustomize/releases/download
+curl -sL "$url/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz" \
+  | sudo tar -xz -C /usr/local/bin kustomize
+kustomize version
+
+# Open up required ports on firewall
+sudo ufw allow from 10.42.0.0/16
+sudo ufw allow from 10.43.0.0/16
+sudo ufw allow 30080/tcp
+sudo ufw allow 30081/tcp
+
+# Check everything
+git --version
+kustomize version
+python3 -c "import jsonschema, yaml; print('python libraries ok')"
+ansible --version | sed -n 1p
+ansible-galaxy collection list kubernetes.core | tail -2
+free -g | sed -n 2p
+```
+
+Render and check the files
+```
+kustomize build k8s > /tmp/awx-rendered.yaml
+grep -c '^kind:' /tmp/awx-rendered.yaml
+python3 validate_crs.py /tmp/awx-rendered.yaml \
+  k8s/awx.yaml k8s/awx-backup.yaml k8s/awx-restore.yaml
+```
+
+Install K3S cluster and setup AWX
+```
+time ansible-playbook -i inventory.yml -K install-awx.yml \
+  -e k3s_kubeconfig_mode=0644
+```
+
+Check the pods
+```
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+kubectl -n awx get pods
+```
+
+Backup
+```
+kubectl apply -f k8s/awx-backup.yaml
+sleep 180
+kubectl -n awx get awxbackup awx-backup-lab -o yaml | sed -n '/^status:/,$p'
+```
+
+Restore
+```
+kubectl apply -f k8s/awx-restore.yaml
+sleep 300
+kubectl -n awx get pods
+kubectl -n awx get services
+```
+
