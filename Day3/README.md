@@ -138,26 +138,57 @@ ip link | grep -E "cni0|flannel"
 ## Lab - Configuring Windows 2022 Server to ensure ansible can manage it
 On Windows 2022 Server Powershell command promt
 ```
-# 1. Set a known password (lab use only)
-$plain = "WinLab2026Pass"
-$secure = ConvertTo-SecureString $plain -AsPlainText -Force
-Set-LocalUser -Name ansible -Password $secure
-Enable-LocalUser -Name ansible
+# ---------- Settings (lab use only) ----------
+$userName = "ansible"
+$plain    = "WinLab2026Pass"     # must not contain the username
+$secure   = ConvertTo-SecureString $plain -AsPlainText -Force
 
-# 2. Make sure the account is an administrator
-if (-not (Get-LocalGroupMember -Group "Administrators" -Member "ansible" -ErrorAction SilentlyContinue)) {
-    Add-LocalGroupMember -Group "Administrators" -Member "ansible"
+# 1. Create the user, or reset the password if the user exists
+if (Get-LocalUser -Name $userName -ErrorAction SilentlyContinue) {
+    Set-LocalUser -Name $userName -Password $secure -PasswordNeverExpires $true
+    Enable-LocalUser -Name $userName
+} else {
+    New-LocalUser -Name $userName -Password $secure `
+        -PasswordNeverExpires -AccountNeverExpires | Out-Null
+}
+
+# 2. Add the user to Administrators
+if (-not (Get-LocalGroupMember -Group "Administrators" -Member $userName -ErrorAction SilentlyContinue)) {
+    Add-LocalGroupMember -Group "Administrators" -Member $userName
 }
 
 # 3. Give remote local-account logins full admin rights
 New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System `
     -Name LocalAccountTokenFilterPolicy -Value 1 -PropertyType DWord -Force | Out-Null
 
-# 4. Make sure remoting is on, then restart WinRM
+# 4. Enable PowerShell remoting
 Enable-PSRemoting -Force -SkipNetworkProfileCheck | Out-Null
+
+# 5. Create the HTTPS listener if it does not exist
+$httpsListener = Get-ChildItem WSMan:\localhost\Listener |
+    Where-Object { $_.Keys -contains "Transport=HTTPS" }
+
+if (-not $httpsListener) {
+    $cert = New-SelfSignedCertificate -DnsName $env:COMPUTERNAME `
+        -CertStoreLocation Cert:\LocalMachine\My
+    New-Item -Path WSMan:\localhost\Listener -Transport HTTPS -Address * `
+        -CertificateThumbPrint $cert.Thumbprint -Force | Out-Null
+}
+
+# 6. Open port 5986 in the firewall
+if (-not (Get-NetFirewallRule -DisplayName "WinRM HTTPS" -ErrorAction SilentlyContinue)) {
+    New-NetFirewallRule -DisplayName "WinRM HTTPS" -Direction Inbound `
+        -Protocol TCP -LocalPort 5986 -Action Allow | Out-Null
+}
+
+# 7. Restart WinRM
 Restart-Service WinRM
 
-# 5. Show the state
+# 8. Show the state
+"--- User ---"
+Get-LocalUser -Name $userName | Select-Object Name, Enabled | Format-Table -AutoSize
+"--- Administrators ---"
+Get-LocalGroupMember -Group "Administrators" | Select-Object Name | Format-Table -AutoSize
 "--- Token filter policy ---"
 (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System).LocalAccountTokenFilterPolicy
 "--- Auth methods ---"
@@ -165,9 +196,9 @@ winrm get winrm/config/Service/Auth
 "--- Listeners ---"
 winrm enumerate winrm/config/Listener | Select-String "Transport|Port"
 
-# 6. Test the login locally
+# 9. Test the login locally
 "--- Local login test ---"
-$cred = New-Object System.Management.Automation.PSCredential("ansible", $secure)
+$cred = New-Object System.Management.Automation.PSCredential($userName, $secure)
 Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock { whoami }
 ```
 
