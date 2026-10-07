@@ -429,6 +429,11 @@ Set-LocalUser -Name ansible -Password $password
 
 $cred = Get-Credential -UserName "ansible" -Message "Test"
 Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock { whoami }
+
+New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System `
+    -Name LocalAccountTokenFilterPolicy -Value 1 -PropertyType DWord -Force
+
+Restart-Service WinRM
 ```
 
 On the Control node, update the inventory.ini
