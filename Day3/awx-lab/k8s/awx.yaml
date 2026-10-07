@@ -1,0 +1,18 @@
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awx
+spec:
+  admin_user: admin
+  admin_password_secret: awx-admin-password
+  # Reach the web UI on port 30080 of the node
+  service_type: nodeport
+  nodeport_port: 30080
+  # Small lab sizes; the operator's defaults assume a bigger cluster
+  web_resource_requirements:
+    requests: {cpu: 250m, memory: 512Mi}
+  task_resource_requirements:
+    requests: {cpu: 250m, memory: 512Mi}
+  postgres_storage_requirements:
+    requests: {storage: 8Gi}

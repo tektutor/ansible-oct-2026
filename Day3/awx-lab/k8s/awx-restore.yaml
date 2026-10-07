@@ -1,0 +1,14 @@
+---
+# Restore into a new AWX named awx-restored from a named backup
+apiVersion: awx.ansible.com/v1beta1
+kind: AWXRestore
+metadata:
+  name: awx-restore-lab
+  namespace: awx
+spec:
+  deployment_name: awx-restored
+  backup_name: awx-backup-lab
+  # The backup holds the settings of the original, including its port.
+  # Two instances cannot share one port, so give the copy its own.
+  spec_overrides:
+    nodeport_port: 30081

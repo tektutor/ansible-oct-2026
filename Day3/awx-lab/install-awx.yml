@@ -1,0 +1,102 @@
+---
+- name: Install k3s and AWX on one lab VM
+  hosts: awx
+  become: true
+
+  vars:
+    # The stable channel installs the current stable k3s release
+    k3s_channel: stable
+    kubeconfig: /etc/rancher/k3s/k3s.yaml
+    # 0600 lets only root read the kubeconfig. Use 0644 when the control
+    # node and the target are the same computer (see Common Errors).
+    k3s_kubeconfig_mode: "0600"
+    awx_manifest_dir: /opt/awx
+
+  tasks:
+    - name: Download the k3s installer
+      ansible.builtin.get_url:
+        url: https://get.k3s.io
+        dest: /usr/local/bin/k3s-install.sh
+        mode: "0755"
+
+    - name: Install k3s as a single-node cluster
+      ansible.builtin.command:
+        cmd: /usr/local/bin/k3s-install.sh
+        creates: /usr/local/bin/k3s
+      environment:
+        INSTALL_K3S_CHANNEL: "{{ k3s_channel }}"
+        INSTALL_K3S_EXEC: "--write-kubeconfig-mode {{ k3s_kubeconfig_mode }}"
+
+    - name: Install the Python client that kubernetes.core needs (Ubuntu)
+      ansible.builtin.apt:
+        name: python3-kubernetes
+        state: present
+
+    - name: Wait until the node is ready
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        kind: Node
+        wait: true
+        wait_condition:
+          type: Ready
+          status: "True"
+        wait_timeout: 300
+
+    - name: Copy the kustomization and the AWX resources
+      ansible.builtin.copy:
+        src: k8s/
+        dest: "{{ awx_manifest_dir }}/"
+        mode: "0600"
+
+    - name: Install kustomize
+      vars:
+        kustomize_version: v5.8.1
+        kustomize_url: >-
+          https://github.com/kubernetes-sigs/kustomize/releases/download/{{
+          'kustomize%2F' ~ kustomize_version }}/kustomize_{{
+          kustomize_version }}_linux_amd64.tar.gz
+      ansible.builtin.unarchive:
+        src: "{{ kustomize_url }}"
+        dest: /usr/local/bin
+        remote_src: true
+        creates: /usr/local/bin/kustomize
+
+    - name: Render the manifests with kustomize
+      ansible.builtin.command:
+        cmd: kustomize build {{ awx_manifest_dir }}
+      register: rendered
+      changed_when: false
+
+    - name: Apply the operator, its CRDs, and the AWX resource
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
+        definition: "{{ rendered.stdout | from_yaml_all | list }}"
+        apply: true
+        server_side_apply:
+          field_manager: ansible
+      no_log: true
+
+    - name: Wait until AWX reports that it is running (10 to 15 minutes)
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        api_version: awx.ansible.com/v1beta1
+        kind: AWX
+        namespace: awx
+        name: awx
+      register: awx_status
+      # The operator sets Successful to True when the whole installation,
+      # including the database migration, is finished. The condition named
+      # Running only says that the operator is still working.
+      until: >-
+        (awx_status.resources[0].status.conditions | default([])
+         | selectattr('type', 'eq', 'Successful')
+         | selectattr('status', 'eq', 'True') | list | length) > 0
+      retries: 60
+      delay: 20
+
+    - name: Show where to log in
+      ansible.builtin.debug:
+        msg: >-
+          AWX is running at
+          http://{{ ansible_host | default(inventory_hostname) }}:30080
+          as admin; the password is in the Secret awx-admin-password.

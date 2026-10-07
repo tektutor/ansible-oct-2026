@@ -1,0 +1,10 @@
+---
+# Back up the AWX database and secrets to a persistent volume
+apiVersion: awx.ansible.com/v1beta1
+kind: AWXBackup
+metadata:
+  name: awx-backup-lab
+  namespace: awx
+spec:
+  deployment_name: awx
+  backup_storage_requirements: 5Gi
