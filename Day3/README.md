@@ -445,27 +445,10 @@ On the Windows Server 2022 host
 - A self-signed certificate acts as its own issuer, so it goes into both Root and TrustedPeople
 </pre>
 
-Certificate
+Copy the Certificate
 ```
------BEGIN CERTIFICATE-----
-MIIDFjCCAf6gAwIBAgIUFuJRCQF9Ly5TxUZgacKqRgxU6PswDQYJKoZIhvcNAQEL
-BQAwEjEQMA4GA1UEAwwHYW5zaWJsZTAeFw0yNjEwMDcxNjA0MzZaFw0yNzEwMDcx
-NjA0MzZaMBIxEDAOBgNVBAMMB2Fuc2libGUwggEiMA0GCSqGSIb3DQEBAQUAA4IB
-DwAwggEKAoIBAQCy0JNTggPOkHkbUBZw+EssrW8zoEySF+fHaHzM/71OUJLfCePd
-PZLGDC92xMqme2tzU9IA/Dvy1jKQGdg1IBQWycIAtulNx6QlVaTIIMu/0HOX7Vl4
-wR7jA1y3RHUf93tIlIdzJuBCcXKH2PXM+Xjd1pqGnd/AX6bbB7auBJKRpzL76LKR
-WlAbwIPK7x10ucmaFyDog6NaJvqdAfD1qXEM+6+VQjHNbmwnviQXB7rdjCO+Oskb
-uVoASs8qS4e8GUcN+POUO8B/eR/T8+EQ3AkwGv5twJrI8pPlktZp3EbzFDETmzdb
-OzE2ZIwFUp3YZ0NveXhIZ0+5O21ZvoVlwNEhAgMBAAGjZDBiMBMGA1UdJQQMMAoG
-CCsGAQUFBwMCMCwGA1UdEQQlMCOgIQYKKwYBBAGCNxQCA6ATDBFhbnNpYmxlQGxv
-Y2FsaG9zdDAdBgNVHQ4EFgQU2rxgSK1ML1wjNbfiQs847ulHR3swDQYJKoZIhvcN
-AQELBQADggEBAH6Xfo5CcXgiJ8dBYC7zBw6Ac4tPb+8dBYGUTSAodGa6xZaXjHc9
-yM0oNXNQ/Zgb7DyPpuc0XdE23zVhaAikrHQYArNVaDg5akKr+nPonesyojDTlr3+
-XrYvWqmkOZhqsnLHHtPwKGdy8C2qPdRbp9WUo7N+I07J5ppIqeV+tKBEOOy460nB
-uD4xeWn+4UMshLnCDhmA5rv467EXU/yQN0qIClkJMdksbdJVmTJvl0E6hX4U6b9L
-U50voPwhEA575UuUbeODkpCjOzbBejfomu5iRSViLeTeFmp7gv8hs0em8w7jaTlF
-0lzeTtu/S8c2I/ENNGth72EQiKiDca2okio=
------END CERTIFICATE-----
+ansible windows -i inventory.ini -m ansible.windows.win_copy \
+    -a 'src=cert.pem dest=C:\\temp\\cert.pem'
 ```
 
 Powershell
