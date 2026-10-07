@@ -316,6 +316,7 @@ Run it from Ubuntu terminal
 ```
 ansible-playbook -i inventory.ini site.yml
 ```
+<img width="1920" height="1168" alt="image" src="https://github.com/user-attachments/assets/d1cbf11c-abc9-4629-b7e5-ed2a618f50e3" />
 
 Troubleshooting Common failures
 <pre>
