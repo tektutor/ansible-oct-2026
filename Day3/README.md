@@ -138,9 +138,37 @@ ip link | grep -E "cni0|flannel"
 ## Lab - Configuring Windows 2022 Server to ensure ansible can manage it
 On Windows 2022 Server Powershell command promt
 ```
-$password = Read-Host -AsSecureString "Password for ansible user"
-New-LocalUser -Name "ansible" -Password $password -PasswordNeverExpires
-Add-LocalGroupMember -Group "Administrators" -Member "ansible"
+# 1. Set a known password (lab use only)
+$plain = "WinLab2026Pass"
+$secure = ConvertTo-SecureString $plain -AsPlainText -Force
+Set-LocalUser -Name ansible -Password $secure
+Enable-LocalUser -Name ansible
+
+# 2. Make sure the account is an administrator
+if (-not (Get-LocalGroupMember -Group "Administrators" -Member "ansible" -ErrorAction SilentlyContinue)) {
+    Add-LocalGroupMember -Group "Administrators" -Member "ansible"
+}
+
+# 3. Give remote local-account logins full admin rights
+New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System `
+    -Name LocalAccountTokenFilterPolicy -Value 1 -PropertyType DWord -Force | Out-Null
+
+# 4. Make sure remoting is on, then restart WinRM
+Enable-PSRemoting -Force -SkipNetworkProfileCheck | Out-Null
+Restart-Service WinRM
+
+# 5. Show the state
+"--- Token filter policy ---"
+(Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System).LocalAccountTokenFilterPolicy
+"--- Auth methods ---"
+winrm get winrm/config/Service/Auth
+"--- Listeners ---"
+winrm enumerate winrm/config/Listener | Select-String "Transport|Port"
+
+# 6. Test the login locally
+"--- Local login test ---"
+$cred = New-Object System.Management.Automation.PSCredential("ansible", $secure)
+Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock { whoami }
 ```
 
 Enable WinRM and create HTTPS Listener

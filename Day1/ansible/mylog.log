@@ -1,0 +1,623 @@
+2026-10-07 17:17:56,489 p=253267 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Ubuntu servers] ******************************************************************
+2026-10-07 17:17:56,493 p=253267 u=jegan n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************
+2026-10-07 17:17:57,295 p=253267 u=jegan n=ansible WARNING| [WARNING]: Host 'ubuntu1-jegan' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-07 17:17:57,295 p=253267 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-07 17:17:57,305 p=253267 u=jegan n=ansible WARNING| [WARNING]: Host 'ubuntu2-jegan' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-07 17:17:57,305 p=253267 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-07 17:17:57,307 p=253267 u=jegan n=ansible INFO| TASK [Install nginx in ubuntu ansible node] ********************************************************************************************
+2026-10-07 17:18:10,256 p=253267 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-07 17:18:10,427 p=253267 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-07 17:18:10,429 p=253267 u=jegan n=ansible INFO| TASK [Create the custom web root folder] ***********************************************************************************************
+2026-10-07 17:18:10,694 p=253267 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-07 17:18:10,694 p=253267 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-07 17:18:10,696 p=253267 u=jegan n=ansible INFO| TASK [Retrieve the IP address of the ubuntu node] **************************************************************************************
+2026-10-07 17:18:10,958 p=253267 u=jegan n=ansible INFO| changed: [ubuntu2-jegan]
+2026-10-07 17:18:10,963 p=253267 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-07 17:18:10,965 p=253267 u=jegan n=ansible INFO| TASK [debug] ***************************************************************************************************************************
+2026-10-07 17:18:10,974 p=253267 u=jegan n=ansible INFO| ok: [ubuntu1-jegan] => {
+    "ip": {
+        "changed": true,
+        "cmd": "hostname -i ",
+        "delta": "0:00:00.002522",
+        "end": "2026-10-07 11:48:10.938597",
+        "failed": false,
+        "msg": "",
+        "rc": 0,
+        "start": "2026-10-07 11:48:10.936075",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "172.17.0.2",
+        "stdout_lines": [
+            "172.17.0.2"
+        ]
+    }
+}
+2026-10-07 17:18:10,977 p=253267 u=jegan n=ansible INFO| ok: [ubuntu2-jegan] => {
+    "ip": {
+        "changed": true,
+        "cmd": "hostname -i ",
+        "delta": "0:00:00.002549",
+        "end": "2026-10-07 11:48:10.933009",
+        "failed": false,
+        "msg": "",
+        "rc": 0,
+        "start": "2026-10-07 11:48:10.930460",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "172.17.0.3",
+        "stdout_lines": [
+            "172.17.0.3"
+        ]
+    }
+}
+2026-10-07 17:18:10,979 p=253267 u=jegan n=ansible INFO| TASK [Customize nginx web server to use our custom folder while serving web page] ******************************************************
+2026-10-07 17:18:11,493 p=253267 u=jegan n=ansible INFO| changed: [ubuntu2-jegan]
+2026-10-07 17:18:11,493 p=253267 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-07 17:18:11,497 p=253267 u=jegan n=ansible INFO| TASK [Deploy custom web page] **********************************************************************************************************
+2026-10-07 17:18:11,897 p=253267 u=jegan n=ansible WARNING| [WARNING]: Deprecation warnings can be disabled by setting `deprecation_warnings=False` in ansible.cfg.
+
+2026-10-07 17:18:11,898 p=253267 u=jegan n=ansible INFO| [DEPRECATION WARNING]: INJECT_FACTS_AS_VARS default to `True` is deprecated, top-level facts will not be auto injected after the change. This feature will be removed from ansible-core version 2.24.
+Origin: /home/jegan/ansible-oct-2026/Day1/ansible/index.html.j2
+
+Use `ansible_facts["fact_name"]` (no `ansible_` prefix) instead.
+
+
+2026-10-07 17:18:11,898 p=253267 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-07 17:18:11,899 p=253267 u=jegan n=ansible INFO| changed: [ubuntu2-jegan]
+2026-10-07 17:18:11,901 p=253267 u=jegan n=ansible INFO| TASK [Restart nginx web server in Ubuntu servers to apply config changes] **************************************************************
+2026-10-07 17:18:13,257 p=253267 u=jegan n=ansible INFO| changed: [ubuntu2-jegan]
+2026-10-07 17:18:13,258 p=253267 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-07 17:18:13,260 p=253267 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Rocky server] ********************************************************************
+2026-10-07 17:18:13,263 p=253267 u=jegan n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************
+2026-10-07 17:18:13,959 p=253267 u=jegan n=ansible WARNING| [WARNING]: Host 'rocky1-jegan' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-07 17:18:13,959 p=253267 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-07 17:18:13,962 p=253267 u=jegan n=ansible WARNING| [WARNING]: Host 'rocky2-jegan' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-07 17:18:13,962 p=253267 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-07 17:18:13,964 p=253267 u=jegan n=ansible INFO| TASK [Install Extra Packages for Enterprise Linux (EPEL)] ******************************************************************************
+2026-10-07 17:18:14,785 p=253267 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-07 17:18:14,791 p=253267 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-07 17:18:14,793 p=253267 u=jegan n=ansible INFO| TASK [Install nginx in  Rocky ansible node] ********************************************************************************************
+2026-10-07 17:18:15,553 p=253267 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-07 17:18:15,554 p=253267 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-07 17:18:15,556 p=253267 u=jegan n=ansible INFO| TASK [Check if nginx server is already running] ****************************************************************************************
+2026-10-07 17:18:15,801 p=253267 u=jegan n=ansible ERROR| [ERROR]: Task failed: Module failed: non-zero return code
+Origin: /home/jegan/ansible-oct-2026/Day1/ansible/install-nginx-playbook.yml:41:5
+
+39     yum: name=nginx state=latest
+40
+41   - name: Check if nginx server is already running
+       ^ column 5
+
+
+2026-10-07 17:18:15,802 p=253267 u=jegan n=ansible INFO| fatal: [rocky1-jegan]: FAILED! => {"changed": true, "cmd": "curl localhost", "delta": "0:00:00.006516", "end": "2026-10-07 11:48:15.761515", "msg": "non-zero return code", "rc": 7, "start": "2026-10-07 11:48:15.754999", "stderr": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to localhost port 80: Connection refused", "stderr_lines": ["  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current", "                                 Dload  Upload   Total   Spent    Left  Speed", "", "  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0", "  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0", "curl: (7) Failed to connect to localhost port 80: Connection refused"], "stdout": "", "stdout_lines": []}
+2026-10-07 17:18:15,802 p=253267 u=jegan n=ansible INFO| ...ignoring
+2026-10-07 17:18:15,802 p=253267 u=jegan n=ansible INFO| fatal: [rocky2-jegan]: FAILED! => {"changed": true, "cmd": "curl localhost", "delta": "0:00:00.005960", "end": "2026-10-07 11:48:15.765944", "msg": "non-zero return code", "rc": 7, "start": "2026-10-07 11:48:15.759984", "stderr": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to localhost port 80: Connection refused", "stderr_lines": ["  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current", "                                 Dload  Upload   Total   Spent    Left  Speed", "", "  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0", "  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0", "curl: (7) Failed to connect to localhost port 80: Connection refused"], "stdout": "", "stdout_lines": []}
+2026-10-07 17:18:15,802 p=253267 u=jegan n=ansible INFO| ...ignoring
+2026-10-07 17:18:15,804 p=253267 u=jegan n=ansible INFO| TASK [debug] ***************************************************************************************************************************
+2026-10-07 17:18:15,814 p=253267 u=jegan n=ansible INFO| ok: [rocky1-jegan] => {
+    "output": {
+        "changed": true,
+        "cmd": "curl localhost",
+        "delta": "0:00:00.006516",
+        "end": "2026-10-07 11:48:15.761515",
+        "exception": "(traceback unavailable)",
+        "failed": true,
+        "msg": "non-zero return code",
+        "rc": 7,
+        "start": "2026-10-07 11:48:15.754999",
+        "stderr": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to localhost port 80: Connection refused",
+        "stderr_lines": [
+            "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current",
+            "                                 Dload  Upload   Total   Spent    Left  Speed",
+            "",
+            "  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0",
+            "  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0",
+            "curl: (7) Failed to connect to localhost port 80: Connection refused"
+        ],
+        "stdout": "",
+        "stdout_lines": []
+    }
+}
+2026-10-07 17:18:15,818 p=253267 u=jegan n=ansible INFO| ok: [rocky2-jegan] => {
+    "output": {
+        "changed": true,
+        "cmd": "curl localhost",
+        "delta": "0:00:00.005960",
+        "end": "2026-10-07 11:48:15.765944",
+        "exception": "(traceback unavailable)",
+        "failed": true,
+        "msg": "non-zero return code",
+        "rc": 7,
+        "start": "2026-10-07 11:48:15.759984",
+        "stderr": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0\ncurl: (7) Failed to connect to localhost port 80: Connection refused",
+        "stderr_lines": [
+            "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current",
+            "                                 Dload  Upload   Total   Spent    Left  Speed",
+            "",
+            "  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0",
+            "  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0",
+            "curl: (7) Failed to connect to localhost port 80: Connection refused"
+        ],
+        "stdout": "",
+        "stdout_lines": []
+    }
+}
+2026-10-07 17:18:15,820 p=253267 u=jegan n=ansible INFO| TASK [Create the custom web root folder] ***********************************************************************************************
+2026-10-07 17:18:16,064 p=253267 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-07 17:18:16,064 p=253267 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-07 17:18:16,067 p=253267 u=jegan n=ansible INFO| TASK [Customize nginx web server to use our custom folder while serving web page] ******************************************************
+2026-10-07 17:18:16,497 p=253267 u=jegan n=ansible INFO| changed: [rocky2-jegan]
+2026-10-07 17:18:16,498 p=253267 u=jegan n=ansible INFO| changed: [rocky1-jegan]
+2026-10-07 17:18:16,501 p=253267 u=jegan n=ansible INFO| TASK [Retrieve the IP address of the ubuntu node] **************************************************************************************
+2026-10-07 17:18:16,743 p=253267 u=jegan n=ansible INFO| changed: [rocky1-jegan]
+2026-10-07 17:18:16,750 p=253267 u=jegan n=ansible INFO| changed: [rocky2-jegan]
+2026-10-07 17:18:16,752 p=253267 u=jegan n=ansible INFO| TASK [Deploy custom web page] **********************************************************************************************************
+2026-10-07 17:18:17,173 p=253267 u=jegan n=ansible INFO| changed: [rocky1-jegan]
+2026-10-07 17:18:17,174 p=253267 u=jegan n=ansible INFO| changed: [rocky2-jegan]
+2026-10-07 17:18:17,176 p=253267 u=jegan n=ansible INFO| TASK [Stop the server if it is running already] ****************************************************************************************
+2026-10-07 17:18:17,182 p=253267 u=jegan n=ansible INFO| skipping: [rocky1-jegan]
+2026-10-07 17:18:17,186 p=253267 u=jegan n=ansible INFO| skipping: [rocky2-jegan]
+2026-10-07 17:18:17,188 p=253267 u=jegan n=ansible INFO| TASK [Start nginx web server] **********************************************************************************************************
+2026-10-07 17:18:17,440 p=253267 u=jegan n=ansible INFO| changed: [rocky2-jegan]
+2026-10-07 17:18:17,442 p=253267 u=jegan n=ansible INFO| changed: [rocky1-jegan]
+2026-10-07 17:18:17,442 p=253267 u=jegan n=ansible INFO| PLAY RECAP *****************************************************************************************************************************
+2026-10-07 17:18:17,442 p=253267 u=jegan n=ansible INFO| rocky1-jegan               : ok=10   changed=5    unreachable=0    failed=0    skipped=1    rescued=0    ignored=1   
+2026-10-07 17:18:17,443 p=253267 u=jegan n=ansible INFO| rocky2-jegan               : ok=10   changed=5    unreachable=0    failed=0    skipped=1    rescued=0    ignored=1   
+2026-10-07 17:18:17,443 p=253267 u=jegan n=ansible INFO| ubuntu1-jegan              : ok=8    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2026-10-07 17:18:17,443 p=253267 u=jegan n=ansible INFO| ubuntu2-jegan              : ok=8    changed=4    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2026-10-07 18:15:28,315 p=285536 u=jegan n=ansible INFO| Starting galaxy collection install process
+2026-10-07 18:15:28,401 p=285536 u=jegan n=ansible INFO| Nothing to do. All requested collections are already installed. If you want to reinstall them, consider using `--force`.
+2026-10-07 18:16:32,214 p=285920 u=jegan n=ansible INFO| Starting galaxy collection install process
+2026-10-07 18:16:32,225 p=285920 u=jegan n=ansible INFO| Process install dependency map
+2026-10-07 18:16:32,225 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:32,326 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:32,426 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:32,526 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:32,627 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:32,727 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:32,827 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:32,927 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:33,028 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:33,128 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:33,228 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:33,329 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:33,429 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:33,529 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:33,630 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:33,730 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:33,830 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:33,931 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:34,031 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:34,131 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:34,232 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:34,332 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:34,432 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:34,533 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:34,633 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:34,733 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:34,834 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:34,934 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:35,034 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:35,135 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:35,235 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:35,335 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:35,436 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:35,536 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:35,637 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:35,737 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:35,837 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:35,938 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:36,038 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:36,138 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:36,238 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:36,339 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:36,439 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:36,539 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:36,640 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:36,740 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:36,840 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:36,941 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:37,041 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:37,141 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:37,241 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:37,341 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:37,442 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:37,542 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:37,642 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:37,742 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:37,843 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:37,943 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:38,043 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:38,143 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:38,243 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:38,344 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:38,444 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:38,544 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:38,644 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:38,745 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:38,845 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:38,945 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:39,046 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:39,146 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:39,246 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:39,346 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:39,447 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:39,547 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:39,647 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:39,748 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:39,848 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:39,948 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:40,048 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:40,149 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:40,249 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:40,349 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:40,450 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:40,550 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:40,650 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:40,751 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:40,851 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:40,951 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:41,052 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:41,152 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:41,252 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:41,352 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:41,453 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:41,553 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:41,653 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:41,754 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:41,854 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:41,954 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:42,055 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:42,155 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:42,255 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:42,356 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:42,456 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:42,556 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:42,656 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:42,757 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:42,857 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:42,957 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:43,058 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:43,158 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:43,258 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:43,358 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:43,459 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:43,559 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:43,659 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:43,759 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:43,860 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:43,960 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:44,060 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:44,160 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:44,261 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:44,361 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:44,461 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:44,561 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:44,662 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:44,762 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:44,862 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:44,962 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:45,063 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:45,163 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:45,263 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:45,363 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:45,464 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:45,564 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:45,664 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:45,764 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:45,864 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:45,965 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:46,065 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:46,165 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:46,266 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:46,366 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:46,466 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:46,566 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:46,667 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:46,767 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:46,867 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:46,967 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:47,068 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:47,168 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:47,268 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:47,368 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:47,469 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:47,569 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:47,669 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:47,770 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:47,870 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:47,970 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:48,071 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:48,171 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:48,271 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:48,371 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:48,471 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:48,572 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:48,672 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:48,772 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:48,872 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:48,973 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:49,073 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:49,173 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:49,273 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:49,374 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:49,474 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:49,574 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:49,674 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:49,775 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:49,875 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:49,975 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:50,076 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:50,176 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:50,276 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:50,389 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:50,489 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:50,590 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:50,690 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:50,790 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:50,890 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:50,991 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:51,091 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:51,191 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:51,291 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:51,392 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:51,492 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:51,592 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:51,692 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:51,793 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:51,893 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:51,993 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:52,093 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:52,194 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:52,294 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:52,394 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:52,495 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:52,595 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:52,695 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:52,795 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:52,896 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:52,996 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:53,096 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:53,197 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:53,297 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:53,397 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:53,497 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:53,598 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:53,698 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:53,798 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:53,899 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:53,999 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:54,099 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:54,199 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:54,299 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:54,399 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:54,500 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:54,600 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:54,700 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:54,801 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:54,901 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:55,001 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:55,101 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:55,201 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:55,302 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:55,402 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:55,502 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:55,602 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:55,703 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:55,803 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:55,903 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:56,003 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:56,103 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:56,211 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:56,311 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:56,411 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:56,511 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:56,612 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:56,712 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:56,812 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:56,912 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:57,013 p=285920 u=jegan n=ansible INFO| Starting collection install process
+2026-10-07 18:16:57,013 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:57,032 p=285920 u=jegan n=ansible INFO| Downloading https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/ansible-windows-3.8.0.tar.gz to /home/jegan/.ansible/tmp/ansible-local-285920pjmhkfrb/tmp7bxt41ss/ansible-windows-3.8.0-pnb6so9x
+2026-10-07 18:16:57,113 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:57,214 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:57,314 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:57,415 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:57,515 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:57,615 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:57,716 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:57,816 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:57,916 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:58,017 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:58,117 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:58,217 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:58,318 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:58,418 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:58,518 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:58,619 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:58,719 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:58,819 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:58,920 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:59,020 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:59,121 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:59,221 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:59,321 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:59,422 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:59,522 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:16:59,622 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:16:59,723 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:16:59,823 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:16:59,924 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:00,024 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:00,125 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:00,225 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:00,325 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:00,425 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:00,526 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:00,626 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:00,727 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:00,827 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:00,927 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:01,028 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:01,128 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:01,228 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:01,329 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:01,429 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:01,529 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:01,630 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:01,730 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:01,830 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:01,930 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:02,031 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:02,131 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:02,231 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:02,332 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:02,432 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:02,532 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:02,632 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:02,732 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:02,832 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:02,933 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:03,033 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:03,133 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:03,233 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:03,334 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:03,434 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:03,534 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:03,634 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:03,734 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:03,835 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:03,935 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:04,035 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:04,135 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:04,236 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:04,336 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:04,436 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:04,536 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:04,636 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:04,737 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:04,837 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:04,937 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:05,037 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:05,138 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:05,238 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:05,338 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:05,438 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:05,539 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:05,639 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:05,739 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:05,839 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:05,940 p=285920 u=jegan n=ansible INFO| Installing 'ansible.windows:3.8.0' to '/home/jegan/.ansible/collections/ansible_collections/ansible/windows'
+2026-10-07 18:17:05,940 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:06,033 p=285920 u=jegan n=ansible INFO| Downloading https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/community-windows-3.3.0.tar.gz to /home/jegan/.ansible/tmp/ansible-local-285920pjmhkfrb/tmp7bxt41ss/community-windows-3.3.0-hhxhiy7s
+2026-10-07 18:17:06,040 p=285920 u=jegan n=ansible INFO| ansible.windows:3.8.0 was installed successfully
+2026-10-07 18:17:06,041 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:06,141 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:06,241 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:06,341 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:06,441 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:06,541 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:06,642 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:06,742 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:06,842 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:06,943 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:07,043 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:07,143 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:07,243 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:07,344 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:07,444 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:07,544 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:07,645 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:07,745 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:07,845 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:07,945 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:08,046 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:08,146 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:08,246 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:08,346 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:08,447 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:08,547 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:08,647 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:08,747 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:08,847 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:08,948 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:09,048 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:09,148 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:09,248 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:09,349 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:09,449 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:09,550 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:09,650 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:09,750 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:09,850 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:09,951 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:10,051 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:10,151 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:10,251 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:10,352 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:10,452 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:10,552 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:10,653 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:10,753 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:10,853 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:10,954 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:11,054 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:11,154 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:11,255 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:11,355 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:11,455 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:11,556 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:11,656 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:11,757 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:11,857 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:11,957 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:12,058 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:12,158 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:12,258 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:12,359 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:12,459 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:12,559 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:12,659 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:12,759 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:12,860 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:12,960 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:13,060 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:13,161 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:13,261 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:13,361 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:13,462 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:13,562 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:13,662 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:13,763 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:13,863 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:13,963 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:14,064 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:14,164 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:14,264 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:14,364 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:14,465 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:14,565 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:14,665 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:14,766 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:14,866 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:14,966 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:15,067 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:15,167 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:15,267 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:15,368 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:15,468 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:15,568 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:15,669 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:15,769 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:15,869 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:15,970 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:16,070 p=285920 u=jegan n=ansible INFO| -
+2026-10-07 18:17:16,170 p=285920 u=jegan n=ansible INFO| \
+2026-10-07 18:17:16,270 p=285920 u=jegan n=ansible INFO| |
+2026-10-07 18:17:16,371 p=285920 u=jegan n=ansible INFO| /
+2026-10-07 18:17:16,471 p=285920 u=jegan n=ansible INFO| Installing 'community.windows:3.3.0' to '/home/jegan/.ansible/collections/ansible_collections/community/windows'
+2026-10-07 18:17:16,471 p=285920 u=jegan n=ansible INFO| community.windows:3.3.0 was installed successfully
