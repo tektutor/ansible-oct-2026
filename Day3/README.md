@@ -5,7 +5,7 @@ Check if all the required files are present
 ```
 cd ~/ansible-oct-2026
 git pull
-cd Day3/cd awx-lab
+cd Day3/awx-lab
 ls -1 . k8s
 ```
 
