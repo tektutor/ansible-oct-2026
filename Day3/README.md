@@ -195,6 +195,41 @@ winrm enumerate winrm/config/Listener
 Test-NetConnection -ComputerName localhost -Port 5986
 ```
 
+Run this on Windows Powershell
+```
+# 1. Set a known password (lab use only)
+$plain = "AnsibleLab2026"
+$secure = ConvertTo-SecureString $plain -AsPlainText -Force
+Set-LocalUser -Name ansible -Password $secure
+Enable-LocalUser -Name ansible
+
+# 2. Make sure the account is an administrator
+if (-not (Get-LocalGroupMember -Group "Administrators" -Member "ansible" -ErrorAction SilentlyContinue)) {
+    Add-LocalGroupMember -Group "Administrators" -Member "ansible"
+}
+
+# 3. Give remote local-account logins full admin rights
+New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System `
+    -Name LocalAccountTokenFilterPolicy -Value 1 -PropertyType DWord -Force | Out-Null
+
+# 4. Make sure remoting is on, then restart WinRM
+Enable-PSRemoting -Force -SkipNetworkProfileCheck | Out-Null
+Restart-Service WinRM
+
+# 5. Show the state
+"--- Token filter policy ---"
+(Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System).LocalAccountTokenFilterPolicy
+"--- Auth methods ---"
+winrm get winrm/config/Service/Auth
+"--- Listeners ---"
+winrm enumerate winrm/config/Listener | Select-String "Transport|Port"
+
+# 6. Test the login locally
+"--- Local login test ---"
+$cred = New-Object System.Management.Automation.PSCredential("ansible", $secure)
+Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock { whoami }
+```
+
 On your Ansible Control Node, run this to install WinRM and windows collections
 ```
 pip install pywinrm
@@ -447,6 +482,23 @@ New-ItemProperty -Path $path -Name DisabledByDefault -Value 1 -PropertyType DWor
 Restart-Computer
 ```
 
+Read the password on the windows server on the Powershell
+```
+Get-LocalUser -Name ansible | Select-Object Name, Enabled, PasswordExpires, PasswordLastSet
+Get-LocalGroupMember -Group "Administrators"
+
+$password = Read-Host -AsSecureString "New password for ansible"
+Set-LocalUser -Name ansible -Password $password
+
+$cred = Get-Credential -UserName "ansible" -Message "Test"
+Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock { whoami }
+
+New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System `
+    -Name LocalAccountTokenFilterPolicy -Value 1 -PropertyType DWord -Force
+
+Restart-Service WinRM
+```
+
 On the Control node, update the inventory.ini
 ```
 [windows]
@@ -468,4 +520,7 @@ Test
 ansible windows -i inventory.ini -m ansible.windows.win_ping
 ```
 
-
+## Lab - Creating a sample ansible.cfg file
+```
+ansible-config init --disabled > ansible.cfg.example
+```
