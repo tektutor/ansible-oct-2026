@@ -136,7 +136,7 @@ ip link | grep -E "cni0|flannel"
 ```
 
 ## Lab - Configuring Windows 2022 Server to ensure ansible can manage it
-On Windows 2022 Server Powershell command promt
+On Windows 2022 Server Powershell command prompt
 ```
 # ---------- Settings (lab use only) ----------
 $userName = "ansible"
