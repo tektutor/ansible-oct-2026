@@ -51,7 +51,7 @@ free -g | sed -n 2p
 Render and check the files
 ```
 cd ~/ansible-oct-2026
-cd Day3/cd awx-lab
+cd Day3/awx-lab
 
 kustomize build k8s > /tmp/awx-rendered.yaml
 grep -c '^kind:' /tmp/awx-rendered.yaml
