@@ -337,3 +337,102 @@ On your inventory
 ```
 ansible_winrm_transport=credssp
 ```
+
+## Lab - Using Certificate to authenticate windows configuration management
+
+Generate the certificate and key on the Control node, 
+```
+USERNAME="ansible"
+
+cat > openssl.conf << EOF
+distinguished_name = req_distinguished_name
+
+[req_distinguished_name]
+
+[v3_req_client]
+extendedKeyUsage = clientAuth
+subjectAltName = otherName:1.3.6.1.4.1.311.20.2.3;UTF8:${USERNAME}@localhost
+EOF
+
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -sha256 \
+    -keyout cert_key.pem \
+    -out cert.pem \
+    -subj "/CN=${USERNAME}" \
+    -config openssl.conf \
+    -extensions v3_req_client
+
+chmod 600 cert_key.pem
+rm openssl.conf
+
+# Confirm the extensions
+openssl x509 -in cert.pem -noout -text | grep -A1 -E "Extended Key Usage|Subject Alternative Name"
+```
+
+On the Windows Server 2022 host
+<pre>
+- Copy cert.pem to the server (for example C:\temp\cert.pem), then run these in an elevated PowerShell session
+- A self-signed certificate acts as its own issuer, so it goes into both Root and TrustedPeople
+</pre>
+
+Powershell
+```
+$cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new("C:\temp\cert.pem")
+
+foreach ($storeName in "Root", "TrustedPeople") {
+    $store = Get-Item -Path "Cert:\LocalMachine\$storeName"
+    $store.Open("ReadWrite")
+    $store.Add($cert)
+    $store.Dispose()
+}
+
+Set-Item -Path WSMan:\localhost\Service\Auth\Certificate -Value $true
+```
+
+Map the certificate to the local account
+```
+$credential = Get-Credential -UserName "ansible" -Message "Password for the local ansible account"
+
+New-Item -Path WSMan:\localhost\ClientCertificate `
+    -Subject "ansible@localhost" `
+    -URI * `
+    -Issuer $cert.Thumbprint `
+    -Credential $credential `
+    -Force
+```
+
+Disable TLS 1.3 for inbound connections
+<pre>
+- WinRM certificate authentication fails over TLS 1.3, and Server 2022 enables TLS 1.3 by default
+- This registry change forces TLS 1.2
+- It applies to every Schannel-based server service on the machine, including IIS, so check that this is acceptable before you apply it 
+</pre>
+```
+$path = "HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.3\Server"
+New-Item -Path $path -Force | Out-Null
+New-ItemProperty -Path $path -Name Enabled -Value 0 -PropertyType DWord -Force
+New-ItemProperty -Path $path -Name DisabledByDefault -Value 1 -PropertyType DWord -Force
+Restart-Computer
+```
+
+On the Control node, update the inventory.ini
+```
+[windows]
+win2022 ansible_host=192.168.1.50
+
+[windows:vars]
+ansible_connection=winrm
+ansible_port=5986
+ansible_winrm_scheme=https
+ansible_winrm_transport=certificate
+ansible_winrm_cert_pem=/home/jegan/certs/cert.pem
+ansible_winrm_cert_key_pem=/home/jegan/certs/cert_key.pem
+ansible_winrm_server_cert_validation=ignore
+```
+
+
+Test
+```
+ansible windows -i inventory.ini -m ansible.windows.win_ping
+```
+
+
