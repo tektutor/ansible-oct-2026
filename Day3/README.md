@@ -440,4 +440,7 @@ Test
 ansible windows -i inventory.ini -m ansible.windows.win_ping
 ```
 
-
+## Lab - Creating a sample ansible.cfg file
+```
+ansible-config init --disabled > ansible.cfg.example
+```
