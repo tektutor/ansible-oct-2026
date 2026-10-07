@@ -426,6 +426,9 @@ Get-LocalGroupMember -Group "Administrators"
 
 $password = Read-Host -AsSecureString "New password for ansible"
 Set-LocalUser -Name ansible -Password $password
+
+$cred = Get-Credential -UserName "ansible" -Message "Test"
+Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock { whoami }
 ```
 
 On the Control node, update the inventory.ini
