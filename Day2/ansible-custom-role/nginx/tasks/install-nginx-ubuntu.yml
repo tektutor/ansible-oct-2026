@@ -1,0 +1,4 @@
+- name: Install nginx in ubuntu ansible node
+  apt: name=nginx state=latest update_cache=yes
+  notify:
+  - Start nginx in Ubuntu server

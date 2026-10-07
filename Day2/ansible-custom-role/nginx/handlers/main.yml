@@ -1,0 +1,20 @@
+---
+# handlers file for nginx
+- name: Check if nginx server is already running in Rocky
+  shell: curl localhost
+  register: output
+  ignore_errors: yes
+
+- name: Stop nginx in Rocky server
+  shell: nginx -s stop
+  ignore_errors: yes
+
+- name: Start nginx in Rocky server
+  when: output.rc == 0 
+  shell: nginx
+
+- name: Restart nginx in Ubuntu server
+  service: 
+    name: nginx 
+    state: restarted
+    enabled: true

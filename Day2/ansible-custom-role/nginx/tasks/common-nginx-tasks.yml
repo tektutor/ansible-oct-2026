@@ -1,0 +1,8 @@
+- name: Create the custom web root folder
+  file: path=/var/html mode=0755 state=directory
+
+- name: Retrieve the IP address of the ubuntu node
+  shell: "hostname -i "
+  register: ip
+
+- debug: var=ip

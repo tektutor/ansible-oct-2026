@@ -1,0 +1,13 @@
+<html>
+	<head>
+		<title>{{greeting_message}}</title>
+	</head>
+	<body>
+		<h3>Provisioned by : {{provisioner_tool}}</h3>
+		<h3>Configured by : {{conf_mgr_tool}}</h3>
+		<h3>Linux distribution: {{ansible_facts["distribution"]}} v{{ansible_facts["distribution_version"]}}</h3>
+		<h3>Hostname          : {{ansible_facts["hostname"]}}</h3>
+		<h3>IP addresss       : {{ip.stdout}}</h3>
+		<h3>Kernel           : {{ansible_facts["kernel_version"]}}</h3>
+	</body>
+</html>

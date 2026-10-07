@@ -1,0 +1,5 @@
+- name: Customize nginx web server to use our custom folder while serving web page
+  copy: src=nginx.conf dest=/etc/nginx/nginx.conf
+  notify:
+  - Stop nginx in Rocky server
+  - Start nginx in Rocky server

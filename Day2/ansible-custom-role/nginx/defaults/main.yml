@@ -1,3 +1,4 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # defaults file for nginx
+greeting_message: "Welcome to DevOps!"

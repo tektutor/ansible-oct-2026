@@ -1,8 +1,8 @@
 #SPDX-License-Identifier: MIT-0
 galaxy_info:
-  author: your name
-  description: your role description
-  company: your company (optional)
+  author: Jeganathan Swaminathan <jegan@tektutor.org>
+  description: This role will install nginx web server 
+  company: TekTutor ( https://www.tektutor.org ) 
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value

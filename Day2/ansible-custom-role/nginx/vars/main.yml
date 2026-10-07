@@ -1,3 +1,5 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # vars file for nginx
+conf_mgr_tool: Ansible
+provisioner_tool: Docker
