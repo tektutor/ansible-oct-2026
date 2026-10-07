@@ -13,6 +13,7 @@ Install the tools
 ```
 sudo apt update
 sudo apt install -y curl unzip git python3-venv
+sudo apt install python3-pip
 ```
 
 Check the tools
