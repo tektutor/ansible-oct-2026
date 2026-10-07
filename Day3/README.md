@@ -263,6 +263,9 @@ Invoke-Command -ComputerName localhost -Credential $cred -ScriptBlock { whoami }
 
 On your Ansible Control Node, run this to install WinRM and windows collections
 ```
+python3 -m venv ~/ansible-venv
+source ~/ansible-venv/bin/activate
+
 pip install pywinrm
 ansible-galaxy collection install ansible.windows community.windows
 ```
@@ -270,11 +273,11 @@ ansible-galaxy collection install ansible.windows community.windows
 Create an inventory.ini
 ```
 [windows]
-win2022 ansible_host=192.168.1.50
+win2022 ansible_host=192.168.122.247
 
 [windows:vars]
 ansible_user=ansible
-ansible_password=YourPasswordHere
+ansible_password=WinLab2026Pass
 ansible_connection=winrm
 ansible_port=5986
 ansible_winrm_scheme=https
@@ -286,6 +289,7 @@ Test the connection
 ```
 ansible windows -i inventory.ini -m ansible.windows.win_ping
 ```
+<img width="1920" height="1168" alt="image" src="https://github.com/user-attachments/assets/ea75d5ef-4a1c-44a1-9e00-5b58f20c2919" />
 
 Run your first ansible playbook targeting your windows server
 site.yml
