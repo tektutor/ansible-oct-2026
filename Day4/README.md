@@ -26,3 +26,23 @@ ansible-playbook -i inventory.ini playbook.yml --list-tasks
 ansible-playbook -i inventory.ini playbook.yml --check --diff
 ansible-playbook -i inventory.ini playbook.yml
 ```
+
+## Lab - Selective Execution with Tags
+```
+cd ~/ansible-oct-2026
+git pull
+cd Day4/tags
+
+# Inspect without running
+ansible-playbook -i inventory.ini site.yml --syntax-check
+ansible-playbook -i inventory.ini site.yml --list-tags
+ansible-playbook -i inventory.ini site.yml --list-tasks
+
+# Run playbook on all nodes
+ansible-playbook -i inventory.ini site.yml
+
+# Using --limit
+ansible-playbook -i inventory.ini site.yml --tags verify --limit rocky
+ansible-playbook -i inventory.ini site.yml --tags config --limit ubuntu1-jegan
+ansible-playbook -i inventory.ini site.yml --tags debug --limit 'app:!rocky'
+```
