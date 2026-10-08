@@ -1,0 +1,53 @@
+---
+- name: Install SQL Server Management Studio
+  hosts: windows
+  gather_facts: false
+
+  vars:
+    ssms_url: https://aka.ms/ssms/22/release/vs_SSMS.exe
+    download_dir: C:\temp
+    ssms_installer: C:\temp\vs_SSMS.exe
+    ssms_exe: C:\Program Files\Microsoft SQL Server Management Studio 22\Release\Common7\IDE\SSMS.exe
+
+  tasks:
+  - name: Create the download directory
+    ansible.windows.win_file:
+      path: "{{download_dir}}"
+      state: directory
+
+  - name: Download the SSMS 22 bootstrapper
+    ansible.windows.win_get_url:
+      url: "{{ssms_url}}"
+      dest: "{{ssms_installer}}"
+      force: false
+
+  - name: Install SSMS 22 silently ( 10 to 20 minutes depending on your internet speed )
+    ansible.windows.win_command:
+      argv:
+        - "{{ ssms_installer }}"
+        - --quiet
+        - --norestart
+        - --wait
+      creates: "{{ssms_exe}}"
+    register: ssms_install
+    failed_when: ssms_install.rc | default(0) not in [0, 3010]
+    become: true
+    become_method: ansible.builtin.runas
+    become_user: SYSTEM
+
+  - name: Reboot if the installer asks for it
+    ansible.windows.win_reboot:
+      reboot_timeout: 900
+    when: ssms_install.rc | default(0) == 3010
+
+  - name: Check that SSMS exists
+    ansible.windows.win_stat:
+      path: "{{ ssms_exe }}"
+    register: ssms_file
+
+  - name: Confirm the installation
+    ansible.builtin.assert:
+      that:
+      - ssms_file.stat.exists
+      success_msg: SSMS 22 is installed 
+      fail_msg: "SSMS.exe not found at {{ ssms_exe }}"
