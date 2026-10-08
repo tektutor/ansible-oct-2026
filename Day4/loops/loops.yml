@@ -1,0 +1,79 @@
+---
+- name: Loops and retries on Windows
+  hosts: windows
+  gather_facts: false
+
+  vars:
+    app_dirs:
+      - C:\demo\app
+      - C:\demo\logs
+      - C:\demo\config
+    app_env:
+      APP_ENV: training
+      APP_PORT: "8080"
+    services:
+      - W3SVC
+      - WinRM
+      - LanmanServer
+    users:
+      - { name: asha, role: developer }
+      - { name: vikram, role: tester }
+      - { name: meena, role: auditor }
+
+  tasks:
+    - name: "loop: create directories from a simple list"
+      ansible.windows.win_file:
+        path: "{{ item }}"
+        state: directory
+      loop: "{{ app_dirs }}"
+
+    - name: "loop: set environment variables from a dictionary"
+      ansible.windows.win_environment:
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
+        level: machine
+        state: present
+      loop: "{{ app_env | dict2items }}"
+      loop_control:
+        label: "{{ item.key }}={{ item.value }}"
+
+    - name: "loop_control: label, index_var, extended, and pause"
+      ansible.windows.win_copy:
+        dest: "C:\\demo\\config\\user{{ idx + 1 }}.txt"
+        content: "User {{ idx + 1 }} of {{ ansible_loop.length }}: {{ item.name }} ({{ item.role }})"
+      loop: "{{ users }}"
+      loop_control:
+        label: "{{ item.name }}"
+        index_var: idx
+        extended: true
+        pause: 1
+
+    - name: "register: read the state of each service"
+      ansible.windows.win_service_info:
+        name: "{{ item }}"
+      loop: "{{ services }}"
+      register: service_info
+
+    - name: "register: show one line per result"
+      ansible.builtin.debug:
+        msg: "{{ item.item }} is {{ item.services[0].state }}"
+      loop: "{{ service_info.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Restart IIS so the next task has something to wait for
+      ansible.windows.win_service:
+        name: W3SVC
+        state: restarted
+
+    - name: "until: wait until the website answers with 200"
+      ansible.windows.win_uri:
+        url: http://localhost/
+      register: site
+      until: site.status_code | default(0) == 200
+      retries: 10
+      delay: 3
+
+    - name: Show how many attempts the wait needed
+      ansible.builtin.debug:
+        msg: "The site answered after {{ site.attempts }} attempt(s)"

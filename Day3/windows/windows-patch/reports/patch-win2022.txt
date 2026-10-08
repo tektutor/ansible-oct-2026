@@ -1,0 +1,13 @@
+Host:              WINWEB01 (win2022)
+OS:                Microsoft Windows Server 2022 Standard Evaluation
+Date:              2026-10-08 11:35
+Mode:              searched
+Free space (GB):   47
+Updates found:     2
+Updates installed: 0
+Updates failed:    0
+Reboot required:   False
+
+Updates:
+- 2026-09 Cumulative Update for Microsoft server operating system version 21H2 for x64-based Systems (KB5122882)
+- 2026-09 Cumulative Update for .NET Framework 3.5, 4.8 and 4.8.1 for Microsoft server operating system version 21H2 for x64 (KB5126149)

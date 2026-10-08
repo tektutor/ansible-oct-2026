@@ -1,0 +1,53 @@
+---
+- name: Deploy and read custom facts
+  hosts: linux
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Create the facts directory
+      ansible.builtin.file:
+        path: /etc/ansible/facts.d
+        state: directory
+        mode: "0755"
+
+    - name: Add a static INI fact file
+      ansible.builtin.copy:
+        dest: /etc/ansible/facts.d/app.fact
+        mode: "0644"
+        content: |
+          [general]
+          name=inventory-service
+          environment=training
+          owner=tektutor
+
+    - name: Add a static JSON fact file
+      ansible.builtin.copy:
+        dest: /etc/ansible/facts.d/location.fact
+        mode: "0644"
+        content: |
+          {
+            "datacenter": "hosur-dc1",
+            "rack": 12
+          }
+
+    - name: Add an executable fact that computes its value
+      ansible.builtin.copy:
+        dest: /etc/ansible/facts.d/users.fact
+        mode: "0755"
+        content: |
+          #!/bin/bash
+          count=$(who | wc -l)
+          echo "{\"logged_in\": ${count}}"
+
+    - name: Gather only the local facts
+      ansible.builtin.setup:
+        filter: ansible_local
+
+    - name: Show the custom facts
+      ansible.builtin.debug:
+        msg:
+          - "App: {{ ansible_facts['ansible_local']['app']['general']['name'] }}"
+          - "Environment: {{ ansible_facts['ansible_local']['app']['general']['environment'] }}"
+          - "Datacenter: {{ ansible_facts['ansible_local']['location']['datacenter'] }}"
+          - "Users logged in: {{ ansible_facts['ansible_local']['users']['logged_in'] }}"

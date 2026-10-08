@@ -1,0 +1,96 @@
+---
+- name: Check the health of the Windows servers
+  hosts: windows
+  gather_facts: true
+
+  vars:
+    disk_warn_percent: 15        # warn when free space drops below this
+    memory_warn_percent: 90      # warn when memory use rises above this
+    watched_services:
+      - W3SVC
+      - WinRM
+      - LanmanServer
+      - EventLog
+    report_file: "{{ playbook_dir }}/reports/health-report.html"
+
+  tasks:
+    - name: Collect health data as structured output
+      ansible.windows.win_powershell:
+        parameters:
+          Services: "{{ watched_services }}"
+        script: |
+          param([string[]]$Services)
+
+          $os = Get-CimInstance Win32_OperatingSystem
+          $cpu = (Get-CimInstance Win32_Processor |
+              Measure-Object -Property LoadPercentage -Average).Average
+          $since = (Get-Date).AddHours(-24)
+          $events = @(Get-WinEvent -FilterHashtable @{
+              LogName = 'System'; Level = 1, 2; StartTime = $since
+          } -ErrorAction SilentlyContinue)
+
+          $Ansible.Changed = $false
+          $Ansible.Result = @{
+              uptime_hours        = [math]::Round(((Get-Date) - $os.LastBootUpTime).TotalHours, 1)
+              cpu_load_percent    = [int]$cpu
+              memory_used_percent = [math]::Round((($os.TotalVisibleMemorySize - $os.FreePhysicalMemory) / $os.TotalVisibleMemorySize) * 100, 1)
+              errors_24h          = $events.Count
+              pending_reboot      = (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending') -or
+                                    (Test-Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired')
+              disks               = @(Get-CimInstance Win32_LogicalDisk -Filter "DriveType=3" | ForEach-Object {
+                  @{
+                      drive        = $_.DeviceID
+                      size_gb      = [math]::Round($_.Size / 1GB, 1)
+                      free_gb      = [math]::Round($_.FreeSpace / 1GB, 1)
+                      free_percent = [math]::Round(($_.FreeSpace / $_.Size) * 100, 1)
+                  }
+              })
+              services            = @(Get-Service -Name $Services -ErrorAction SilentlyContinue | ForEach-Object {
+                  @{ name = $_.Name; status = $_.Status.ToString() }
+              })
+          }
+      register: health
+
+    - name: Work out the problems on this server
+      ansible.builtin.set_fact:
+        health_problems: >-
+          {{
+            (health.result.disks
+              | selectattr('free_percent', 'lt', disk_warn_percent | float)
+              | map(attribute='drive')
+              | map('regex_replace', '^(.*)$', 'Low disk space on \1') | list)
+            + (health.result.services
+              | rejectattr('status', 'eq', 'Running')
+              | map(attribute='name')
+              | map('regex_replace', '^(.*)$', 'Service \1 is not running') | list)
+            + (['Memory use is above ' ~ memory_warn_percent ~ '%']
+              if health.result.memory_used_percent > (memory_warn_percent | float) else [])
+            + (['A reboot is pending'] if health.result.pending_reboot else [])
+          }}
+
+    - name: Create the report directory on the control node
+      ansible.builtin.file:
+        path: "{{ report_file | dirname }}"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+      run_once: true
+
+    - name: Build one HTML report for all servers
+      ansible.builtin.template:
+        src: health-report.html.j2
+        dest: "{{ report_file }}"
+        mode: "0644"
+      delegate_to: localhost
+      run_once: true
+
+    - name: Show the result for this server
+      ansible.builtin.debug:
+        msg: "{{ health_problems if health_problems else 'Healthy' }}"
+
+    - name: Fail the run if this server has problems
+      ansible.builtin.assert:
+        that:
+          - health_problems | length == 0
+        success_msg: "{{ inventory_hostname }} is healthy"
+        fail_msg: "{{ inventory_hostname }} has {{ health_problems | length }} problem(s), see {{ report_file }}"

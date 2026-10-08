@@ -1,0 +1,104 @@
+---
+- name: Windows baseline with a live status page
+  hosts: windows
+  gather_facts: true
+
+  vars:
+    lab_dir: C:\lab\logs
+    time_zone: India Standard Time
+    banner_caption: TekTutor Lab Server
+    banner_text: This server is managed by Ansible. Do not change it by hand.
+
+  tasks:
+    - name: Set the time zone
+      community.windows.win_timezone:
+        timezone: "{{ time_zone }}"
+      tags: baseline
+
+    - name: Install IIS with management tools
+      ansible.windows.win_feature:
+        name: Web-Server
+        state: present
+        include_management_tools: true
+      tags: web
+
+    - name: Create the lab log directory
+      ansible.windows.win_file:
+        path: "{{ lab_dir }}"
+        state: directory
+      tags: baseline
+
+    - name: Set the logon banner in the registry
+      ansible.windows.win_regedit:
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+        name: "{{ item.name }}"
+        data: "{{ item.data }}"
+        type: string
+      loop:
+        - { name: legalnoticecaption, data: "{{ banner_caption }}" }
+        - { name: legalnoticetext, data: "{{ banner_text }}" }
+      tags: baseline
+
+    - name: Create a daily heartbeat scheduled task
+      community.windows.win_scheduled_task:
+        name: Lab Heartbeat
+        description: Appends a timestamp to the heartbeat log once a day
+        actions:
+          - path: powershell.exe
+            arguments: >-
+              -NoProfile -Command "Get-Date -Format s |
+              Out-File -Append {{ lab_dir }}\heartbeat.log"
+        triggers:
+          - type: daily
+            start_boundary: '2026-10-08T06:00:00'
+        username: SYSTEM
+        state: present
+        enabled: true
+      tags: baseline
+
+    - name: Publish a status page built from Windows facts
+      ansible.windows.win_copy:
+        dest: C:\inetpub\wwwroot\index.html
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head><title>{{ ansible_facts['hostname'] }}</title></head>
+          <body>
+            <h1>{{ ansible_facts['hostname'] }}</h1>
+            <p>Managed by Ansible</p>
+            <table border="1" cellpadding="6">
+              <tr><td>Operating system</td><td>{{ ansible_facts['os_name'] }}</td></tr>
+              <tr><td>Version</td><td>{{ ansible_facts['distribution_version'] }}</td></tr>
+              <tr><td>IP addresses</td><td>{{ ansible_facts['ip_addresses'] | join(', ') }}</td></tr>
+              <tr><td>Memory (MB)</td><td>{{ ansible_facts['memtotal_mb'] }}</td></tr>
+              <tr><td>vCPUs</td><td>{{ ansible_facts['processor_vcpus'] }}</td></tr>
+              <tr><td>Last boot</td><td>{{ ansible_facts['lastboot'] }}</td></tr>
+            </table>
+          </body>
+          </html>
+      tags: web
+
+    - name: Ensure IIS runs and starts at boot
+      ansible.windows.win_service:
+        name: W3SVC
+        state: started
+        start_mode: auto
+      tags: web
+
+    - name: Fetch the status page from the control node
+      ansible.builtin.uri:
+        url: "http://{{ hostvars[inventory_hostname]['ansible_host'] }}/"
+        return_content: true
+      delegate_to: localhost
+      register: page
+      tags: verify
+
+    - name: Check that the page shows the right server
+      ansible.builtin.assert:
+        that:
+          - page.status == 200
+          - "'Managed by Ansible' in page.content"
+          - ansible_facts['hostname'] in page.content
+        success_msg: "Status page is live at http://{{ hostvars[inventory_hostname]['ansible_host'] }}/"
+        fail_msg: Status page did not return the expected content
+      tags: verify

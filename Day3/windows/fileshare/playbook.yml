@@ -1,0 +1,130 @@
+---
+- name: Onboard users and publish a secured file share
+  hosts: windows
+  gather_facts: false
+
+  vars:
+    share_name: LabData
+    share_root: C:\Shares\LabData
+    auditors_group: Lab-Auditors
+    lab_user_password: "Tr@ining2026Lab"    # move to Ansible Vault for real use
+
+    departments:
+      - { folder: Engineering, group: Lab-Engineering }
+      - { folder: Finance, group: Lab-Finance }
+
+    lab_users:
+      - { name: asha, fullname: Asha Rao, group: Lab-Engineering }
+      - { name: vikram, fullname: Vikram Nair, group: Lab-Finance }
+      - { name: meena, fullname: Meena Iyer, group: Lab-Auditors }
+
+    fixed_aces:
+      - { user: Administrators, rights: FullControl }
+      - { user: SYSTEM, rights: FullControl }
+      - { user: "{{ auditors_group }}", rights: ReadAndExecute }
+
+  tasks:
+    - name: Create the department groups and the auditors group
+      ansible.windows.win_group:
+        name: "{{ item }}"
+        description: Created by Ansible
+        state: present
+      loop: "{{ (departments | map(attribute='group') | list) + [auditors_group] }}"
+      tags: users
+
+    - name: Create or remove the users
+      ansible.windows.win_user:
+        name: "{{ item.name }}"
+        fullname: "{{ item.fullname }}"
+        password: "{{ lab_user_password }}"
+        update_password: on_create
+        password_never_expires: true
+        groups:
+          - "{{ item.group }}"
+          - Users
+        groups_action: replace
+        state: "{{ item.state | default('present') }}"
+      loop: "{{ lab_users }}"
+      loop_control:
+        label: "{{ item.name }}"
+      no_log: true
+      tags: users
+
+    - name: Create one folder per department
+      ansible.windows.win_file:
+        path: "{{ share_root }}\\{{ item.folder }}"
+        state: directory
+      loop: "{{ departments }}"
+      loop_control:
+        label: "{{ item.folder }}"
+      tags: share
+
+    - name: Grant admins, SYSTEM, and auditors access to every folder
+      ansible.windows.win_acl:
+        path: "{{ share_root }}\\{{ item.0.folder }}"
+        user: "{{ item.1.user }}"
+        rights: "{{ item.1.rights }}"
+        type: allow
+        state: present
+      loop: "{{ departments | product(fixed_aces) | list }}"
+      loop_control:
+        label: "{{ item.0.folder }} -> {{ item.1.user }} ({{ item.1.rights }})"
+      tags: share
+
+    - name: Grant each department Modify rights on its own folder
+      ansible.windows.win_acl:
+        path: "{{ share_root }}\\{{ item.folder }}"
+        user: "{{ item.group }}"
+        rights: Modify
+        type: allow
+        state: present
+      loop: "{{ departments }}"
+      loop_control:
+        label: "{{ item.folder }} -> {{ item.group }}"
+      tags: share
+
+    - name: Stop each folder from inheriting wider permissions
+      ansible.windows.win_acl_inheritance:
+        path: "{{ share_root }}\\{{ item.folder }}"
+        state: absent
+        reorganize: false
+      loop: "{{ departments }}"
+      loop_control:
+        label: "{{ item.folder }}"
+      tags: share
+
+    - name: Publish the SMB share
+      ansible.windows.win_share:
+        name: "{{ share_name }}"
+        path: "{{ share_root }}"
+        description: Department data, managed by Ansible
+        list: true
+        full: Administrators
+        change: "{{ departments | map(attribute='group') | join(',') }}"
+        read: "{{ auditors_group }}"
+        state: present
+      tags: share
+
+    - name: Allow SMB through the firewall
+      community.windows.win_firewall_rule:
+        name: Lab SMB In
+        localport: 445
+        protocol: tcp
+        direction: in
+        action: allow
+        state: present
+        enabled: true
+      tags: share
+
+    - name: Read the share permissions
+      ansible.windows.win_shell: >-
+        Get-SmbShareAccess -Name {{ share_name }} |
+        Format-Table AccountName, AccessRight -AutoSize | Out-String
+      register: share_access
+      changed_when: false
+      tags: verify
+
+    - name: Show the share permissions
+      ansible.builtin.debug:
+        msg: "{{ share_access.stdout_lines | select | list }}"
+      tags: verify

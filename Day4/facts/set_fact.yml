@@ -1,0 +1,27 @@
+---
+- name: Create variables at run time
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Classify the server by memory
+      ansible.builtin.set_fact:
+        server_size: "{{ 'large' if ansible_facts['memtotal_mb'] | int >= 8192 else 'small' }}"
+        app_port: 8080
+
+    - name: Build a value from other values
+      ansible.builtin.set_fact:
+        app_url: "http://{{ ansible_host | default(inventory_hostname) }}:{{ app_port }}/"
+
+    - name: Use the new variables
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }} is a {{ server_size }} server, app at {{ app_url }}"
+
+- name: A second play in the same run
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: The variable from the first play still exists
+      ansible.builtin.debug:
+        msg: "Still known: {{ server_size }}"

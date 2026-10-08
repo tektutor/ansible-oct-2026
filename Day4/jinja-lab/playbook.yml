@@ -1,0 +1,44 @@
+---
+- name: Generate config files from inventory data
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    env_name: training
+    output_dir: "{{ playbook_dir }}/output"
+    nginx:
+      listen_port: 80
+      server_name: app.tektutor.org
+      worker_connections: 1024
+    app_defaults:
+      log_level: info
+      database:
+        port: 5432
+        pool_size: 10
+      features:
+        cache: true
+        metrics: false
+    app_overrides:
+      log_level: debug
+      database:
+        pool_size: 25
+
+  tasks:
+    - name: Create the output directory
+      ansible.builtin.file:
+        path: "{{ output_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Render the Nginx load balancer configuration
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: "{{ output_dir }}/nginx.conf"
+        mode: "0644"
+
+    - name: Render the application configuration
+      ansible.builtin.template:
+        src: app.yml.j2
+        dest: "{{ output_dir }}/app.yml"
+        mode: "0644"

@@ -1,0 +1,70 @@
+---
+- name: Rename the server, reboot, and continue working on it
+  hosts: windows
+  gather_facts: true
+
+  vars:
+    new_hostname: WINWEB01          # 15 characters maximum
+    lab_dir: C:\lab
+
+  tasks:
+    - name: Remember the state before the change
+      ansible.builtin.set_fact:
+        old_hostname: "{{ ansible_facts['hostname'] }}"
+        boot_before: "{{ ansible_facts['lastboot'] }}"
+
+    - name: Show the state before the change
+      ansible.builtin.debug:
+        msg: "Current name is {{ old_hostname }}, last boot was {{ boot_before }}"
+
+    - name: Change the computer name
+      ansible.windows.win_hostname:
+        name: "{{ new_hostname }}"
+      register: rename_result
+
+    - name: Reboot and wait until the server answers again
+      ansible.windows.win_reboot:
+        msg: Ansible is rebooting this server to apply the new computer name
+        pre_reboot_delay: 5
+        reboot_timeout: 600
+        post_reboot_delay: 15
+        test_command: whoami
+      register: reboot_result
+      when: rename_result.reboot_required
+
+    - name: Show how long the reboot took
+      ansible.builtin.debug:
+        msg: "The server came back after {{ reboot_result.elapsed }} seconds"
+      when: reboot_result.rebooted | default(false)
+
+    # ---------- Everything below runs after the reboot ----------
+
+    - name: Gather the facts again
+      ansible.builtin.setup:
+
+    - name: Check that the new name is active
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['hostname'] | upper == new_hostname | upper
+        success_msg: "The server now calls itself {{ ansible_facts['hostname'] }}"
+        fail_msg: "Expected {{ new_hostname }} but found {{ ansible_facts['hostname'] }}"
+
+    - name: Check that the server really restarted
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['lastboot'] != boot_before
+        success_msg: "Boot time changed from {{ boot_before }} to {{ ansible_facts['lastboot'] }}"
+        fail_msg: The boot time did not change, so the server did not restart
+      when: reboot_result.rebooted | default(false)
+
+    - name: Create the lab directory
+      ansible.windows.win_file:
+        path: "{{ lab_dir }}"
+        state: directory
+
+    - name: Write a marker file on the server
+      ansible.windows.win_copy:
+        dest: "{{ lab_dir }}\\rename-report.txt"
+        content: |
+          Computer name: {{ ansible_facts['hostname'] }}
+          Last boot:     {{ ansible_facts['lastboot'] }}

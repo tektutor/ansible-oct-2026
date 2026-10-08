@@ -1,0 +1,10 @@
+---
+- name: "Role: write the message of the day file"
+  ansible.builtin.copy:
+    dest: /tmp/tags-lab-motd.txt
+    content: "{{ inventory_hostname }} is managed by Ansible\n"
+    mode: "0644"
+
+- name: "Role: confirm the message of the day"
+  ansible.builtin.debug:
+    msg: "The motd role finished on {{ inventory_hostname }}"

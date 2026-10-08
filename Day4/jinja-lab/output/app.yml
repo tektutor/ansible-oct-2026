@@ -1,0 +1,38 @@
+# Ansible managed
+application:
+  name: inventory-service
+  environment: training
+  debug: true
+
+settings:
+  database:
+    pool_size: 25
+    port: 5432
+  features:
+    cache: true
+    metrics: false
+  log_level: debug
+
+backends:
+  - name: web1
+    address: 192.168.122.11
+    port: 8080
+    role: active
+    position: 1 of 3
+  - name: web2
+    address: 192.168.122.12
+    port: 8080
+    role: active
+    position: 2 of 3
+  - name: web3
+    address: 192.168.122.13
+    port: 8081
+    role: backup
+    position: 3 of 3
+
+summary:
+  total_backends: 3
+  active_backends: 2
+  ports: [8080, 8081]
+  database_host: 192.168.122.21
+  generated_by: jegan

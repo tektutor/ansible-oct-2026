@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Windows Health Report</title>
+<style>
+  body { font-family: "Segoe UI", Arial, sans-serif; margin: 24px; }
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #999; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #eeeeee; }
+  .ok { background: #d9f2d9; }
+  .bad { background: #f8d0d0; }
+</style>
+</head>
+<body>
+<h1>Windows Health Report</h1>
+<p>Generated: {{ now(fmt='%Y-%m-%d %H:%M') }} | Servers checked: {{ ansible_play_hosts | length }}</p>
+<table>
+  <tr>
+    <th>Server</th><th>Operating system</th><th>Uptime (hours)</th><th>CPU %</th>
+    <th>Memory %</th><th>Disks</th><th>Services</th><th>Errors (24h)</th><th>Status</th>
+  </tr>
+{% for host in ansible_play_hosts %}
+{% set h = hostvars[host].health.result %}
+{% set problems = hostvars[host].health_problems %}
+  <tr>
+    <td>{{ hostvars[host].ansible_facts['hostname'] }}<br>{{ hostvars[host].ansible_host }}</td>
+    <td>{{ hostvars[host].ansible_facts['os_name'] }}</td>
+    <td>{{ h.uptime_hours }}</td>
+    <td>{{ h.cpu_load_percent }}</td>
+    <td class="{{ 'bad' if h.memory_used_percent > (memory_warn_percent | float) else 'ok' }}">{{ h.memory_used_percent }}</td>
+    <td>
+{% for disk in h.disks %}
+      {{ disk.drive }} {{ disk.free_gb }} GB free of {{ disk.size_gb }} GB ({{ disk.free_percent }}%)<br>
+{% endfor %}
+    </td>
+    <td>
+{% for service in h.services %}
+      {{ service.name }}: {{ service.status }}<br>
+{% endfor %}
+    </td>
+    <td>{{ h.errors_24h }}</td>
+    <td class="{{ 'bad' if problems else 'ok' }}">
+{% if problems %}
+{% for problem in problems %}
+      {{ problem }}<br>
+{% endfor %}
+{% else %}
+      Healthy
+{% endif %}
+    </td>
+  </tr>
+{% endfor %}
+</table>
+</body>
+</html>

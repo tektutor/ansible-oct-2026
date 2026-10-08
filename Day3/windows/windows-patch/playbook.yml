@@ -1,0 +1,121 @@
+---
+- name: Patch Windows servers one at a time
+  hosts: windows
+  gather_facts: true
+  serial: 1
+  max_fail_percentage: 0
+
+  vars:
+    patch_state: searched            # searched = report only, installed = apply
+    min_free_gb: 10
+    update_categories:
+      - SecurityUpdates
+      - CriticalUpdates
+    critical_services:
+      - W3SVC
+      - WinRM
+      - LanmanServer
+    report_dir: "{{ playbook_dir }}/reports"
+
+  tasks:
+    - name: Create the report directory on the control node
+      ansible.builtin.file:
+        path: "{{ report_dir }}"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+      run_once: true
+      tags: always
+
+    - name: Run the pre-checks
+      tags: precheck
+      block:
+        - name: Read the free space on drive C
+          ansible.windows.win_shell: "[math]::Round((Get-PSDrive -Name C).Free / 1GB, 1)"
+          register: free_gb
+          changed_when: false
+
+        - name: Stop if the disk has too little free space
+          ansible.builtin.assert:
+            that:
+              - (free_gb.stdout | trim | float) >= min_free_gb
+            success_msg: "Drive C has {{ free_gb.stdout | trim }} GB free"
+            fail_msg: "Drive C has only {{ free_gb.stdout | trim }} GB free, need {{ min_free_gb }} GB"
+
+        - name: Make sure the Windows Update service can start
+          ansible.windows.win_service:
+            name: wuauserv
+            start_mode: manual
+
+    - name: Patch, reboot, and verify
+      tags: patch
+      block:
+        - name: Search for or install updates
+          ansible.windows.win_updates:
+            category_names: "{{ update_categories }}"
+            state: "{{ patch_state }}"
+            reboot: false
+            log_path: C:\lab\logs\ansible-updates.log
+          register: update_result
+
+        - name: Reboot if the updates require it
+          ansible.windows.win_reboot:
+            reboot_timeout: 1800
+            msg: Ansible is rebooting this server to finish patching
+          when:
+            - patch_state == 'installed'
+            - update_result.reboot_required
+
+        - name: Make sure the critical services run after patching
+          ansible.windows.win_service:
+            name: "{{ item }}"
+            state: started
+          loop: "{{ critical_services }}"
+
+      rescue:
+        - name: Record the failure on the control node
+          ansible.builtin.copy:
+            dest: "{{ report_dir }}/patch-{{ inventory_hostname }}-FAILED.txt"
+            mode: "0644"
+            content: |
+              Host:   {{ inventory_hostname }}
+              Date:   {{ now(fmt='%Y-%m-%d %H:%M') }}
+              Task:   {{ ansible_failed_task.name }}
+              Error:  {{ ansible_failed_result.msg | default('no message') }}
+          delegate_to: localhost
+
+        - name: Stop the rollout
+          ansible.builtin.fail:
+            msg: "Patching failed on {{ inventory_hostname }} at task '{{ ansible_failed_task.name }}'"
+
+    - name: Write the patch report on the control node
+      ansible.builtin.copy:
+        dest: "{{ report_dir }}/patch-{{ inventory_hostname }}.txt"
+        mode: "0644"
+        content: |
+          Host:              {{ ansible_facts['hostname'] }} ({{ inventory_hostname }})
+          OS:                {{ ansible_facts['os_name'] }}
+          Date:              {{ now(fmt='%Y-%m-%d %H:%M') }}
+          Mode:              {{ patch_state }}
+          Free space (GB):   {{ free_gb.stdout | trim }}
+          Updates found:     {{ update_result.found_update_count }}
+          Updates installed: {{ update_result.installed_update_count }}
+          Updates failed:    {{ update_result.failed_update_count | default(0) }}
+          Reboot required:   {{ update_result.reboot_required }}
+
+          Updates:
+          {% for update in update_result.updates.values() %}
+          - {{ update.title }}
+          {% else %}
+          - none
+          {% endfor %}
+      delegate_to: localhost
+      tags: report
+
+    - name: Show the summary
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}: found {{ update_result.found_update_count }},
+          installed {{ update_result.installed_update_count }},
+          reboot required {{ update_result.reboot_required }}
+      tags: report

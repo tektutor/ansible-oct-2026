@@ -1,0 +1,28 @@
+# {{ ansible_managed }}
+{% set config = app_defaults | combine(app_overrides, recursive=True) %}
+{% set web_vars = groups['web'] | map('extract', hostvars) | list %}
+{% set backups = web_vars | selectattr('backup', 'defined') | list %}
+application:
+  name: inventory-service
+  environment: {{ env_name }}
+  debug: {{ (config.log_level == 'debug') | lower }}
+
+settings:
+  {{ config | to_nice_yaml(indent=2) | trim | indent(2) }}
+
+backends:
+{% for name in groups['web'] | sort %}
+{% set h = hostvars[name] %}
+  - name: {{ name }}
+    address: {{ h.ansible_host }}
+    port: {{ h.app_port | default(8080) }}
+    role: {{ 'backup' if h.backup | default(false) | bool else 'active' }}
+    position: {{ loop.index }} of {{ loop.length }}
+{% endfor %}
+
+summary:
+  total_backends: {{ web_vars | length }}
+  active_backends: {{ (web_vars | length) - (backups | length) }}
+  ports: [{{ web_vars | map(attribute='app_port') | unique | sort | join(', ') }}]
+  database_host: {{ groups['db'] | default([]) | map('extract', hostvars, 'ansible_host') | first | default('none') }}
+  generated_by: {{ lookup('env', 'USER') }}

@@ -1,0 +1,121 @@
+---
+- name: Blocks and error handling
+  hosts: app1
+  gather_facts: false
+
+  vars:
+    release_dir: /tmp/blocks-lab
+    break_deploy: false
+    disk_limit: 95
+
+  tasks:
+    - name: Prepare the server
+      tags: prepare
+      block:
+        - name: Create the release directory
+          ansible.builtin.file:
+            path: "{{ release_dir }}"
+            state: directory
+            mode: "0755"
+
+        - name: Write the current version
+          ansible.builtin.copy:
+            dest: "{{ release_dir }}/version.txt"
+            content: "1.0\n"
+            mode: "0644"
+
+    - name: Deploy with rollback
+      tags: deploy
+      block:
+        - name: Back up the current version
+          ansible.builtin.copy:
+            src: "{{ release_dir }}/version.txt"
+            dest: "{{ release_dir }}/version.bak"
+            remote_src: true
+            mode: "0644"
+
+        - name: Install the new version
+          ansible.builtin.copy:
+            dest: "{{ release_dir }}/version.txt"
+            content: "2.0\n"
+            mode: "0644"
+
+        - name: Run the smoke test
+          ansible.builtin.command: /bin/false
+          changed_when: false
+          when: break_deploy | bool
+
+        - name: Report success
+          ansible.builtin.debug:
+            msg: Deployment of version 2.0 succeeded
+
+      rescue:
+        - name: Show what failed
+          ansible.builtin.debug:
+            msg: "Task '{{ ansible_failed_task.name }}' failed: {{ ansible_failed_result.msg | default('no message') }}"
+
+        - name: Restore the previous version
+          ansible.builtin.copy:
+            src: "{{ release_dir }}/version.bak"
+            dest: "{{ release_dir }}/version.txt"
+            remote_src: true
+            mode: "0644"
+
+      always:
+        - name: Remove the backup file
+          ansible.builtin.file:
+            path: "{{ release_dir }}/version.bak"
+            state: absent
+
+        - name: Read the active version
+          ansible.builtin.command: "cat {{ release_dir }}/version.txt"
+          register: active_version
+          changed_when: false
+
+        - name: Show the active version
+          ansible.builtin.debug:
+            msg: "Active version is {{ active_version.stdout }}"
+
+    - name: "changed_when: a read-only command never counts as a change"
+      ansible.builtin.command: uptime
+      changed_when: false
+      tags: conditions
+
+    - name: "failed_when: grep returns 1 for no match, which is not an error"
+      ansible.builtin.command: grep -c "no-such-user" /etc/passwd
+      register: grep_result
+      changed_when: false
+      failed_when: grep_result.rc not in [0, 1]
+      tags: conditions
+
+    - name: "failed_when: fail when the root disk is too full"
+      ansible.builtin.command: df --output=pcent /
+      register: disk
+      changed_when: false
+      failed_when: (disk.stdout_lines[1] | trim | replace('%', '') | int) > (disk_limit | int)
+      tags: conditions
+
+    - name: "changed_when: report a change only when the script did something"
+      ansible.builtin.shell: |
+        if [ -f {{ release_dir }}/initialized ]; then
+          echo "nothing to do"
+        else
+          touch {{ release_dir }}/initialized
+          echo "initialized"
+        fi
+      register: init
+      changed_when: "'initialized' in init.stdout"
+      tags: conditions
+
+    - name: "ignore_errors: continue after a failure"
+      ansible.builtin.command: /bin/false
+      register: optional_step
+      changed_when: false
+      ignore_errors: true
+      tags: conditions
+
+    - name: React to the ignored failure
+      ansible.builtin.debug:
+        msg: "The optional step failed with rc {{ optional_step.rc }}, and the play continued"
+      when: optional_step is failed
+      tags: conditions

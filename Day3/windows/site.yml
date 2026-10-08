@@ -1,0 +1,16 @@
+---
+- name: Configure Windows Server 2022
+  hosts: windows
+  gather_facts: true
+  tasks:
+    - name: Install IIS
+      ansible.windows.win_feature:
+        name: Web-Server
+        state: present
+        include_management_tools: true
+
+    - name: Ensure IIS service runs
+      ansible.windows.win_service:
+        name: W3SVC
+        state: started
+        start_mode: auto

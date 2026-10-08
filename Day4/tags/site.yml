@@ -1,0 +1,82 @@
+---
+- name: Prepare the servers
+  hosts: app
+  gather_facts: false
+  tags: prepare
+
+  tasks:
+    - name: Show which server we work on
+      ansible.builtin.debug:
+        msg: "Working on {{ inventory_hostname }}, member of {{ group_names | join(', ') }}"
+      tags: always
+
+    - name: Create the lab directory
+      ansible.builtin.file:
+        path: /tmp/tags-lab
+        state: directory
+        mode: "0755"
+
+- name: Deploy the application
+  hosts: app
+  gather_facts: false
+
+  roles:
+    - role: motd
+      tags: motd
+
+  tasks:
+    - name: Install the application
+      tags: install
+      block:
+        - name: Create the application directory
+          ansible.builtin.file:
+            path: /tmp/tags-lab/app
+            state: directory
+            mode: "0755"
+
+        - name: Write the version file
+          ansible.builtin.copy:
+            dest: /tmp/tags-lab/app/version.txt
+            content: "1.0\n"
+            mode: "0644"
+          tags: version
+
+    - name: Write the configuration file
+      ansible.builtin.copy:
+        dest: /tmp/tags-lab/app.conf
+        content: |
+          server_name={{ inventory_hostname }}
+          port=8080
+        mode: "0644"
+      tags:
+        - configure
+        - config
+
+    - name: Announce the deployment
+      ansible.builtin.debug:
+        msg: This task has no tag
+
+    - name: Check the deployed files
+      ansible.builtin.command: ls -R /tmp/tags-lab
+      register: listing
+      changed_when: false
+      tags: verify
+
+    - name: Show the deployed files
+      ansible.builtin.debug:
+        msg: "{{ listing.stdout_lines }}"
+      tags: verify
+
+    - name: Print troubleshooting details
+      ansible.builtin.debug:
+        msg: "Connected to {{ ansible_host }}:{{ ansible_port }} as {{ ansible_user }}"
+      tags: [never, debug]
+
+    - name: Delete everything this lab created
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/tags-lab
+        - /tmp/tags-lab-motd.txt
+      tags: [never, cleanup]

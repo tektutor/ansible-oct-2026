@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Windows Health Report</title>
+<style>
+  body { font-family: "Segoe UI", Arial, sans-serif; margin: 24px; }
+  table { border-collapse: collapse; }
+  th, td { border: 1px solid #999; padding: 6px 10px; text-align: left; vertical-align: top; }
+  th { background: #eeeeee; }
+  .ok { background: #d9f2d9; }
+  .bad { background: #f8d0d0; }
+</style>
+</head>
+<body>
+<h1>Windows Health Report</h1>
+<p>Generated: 2026-10-07 22:22 | Servers checked: 1</p>
+<table>
+  <tr>
+    <th>Server</th><th>Operating system</th><th>Uptime (hours)</th><th>CPU %</th>
+    <th>Memory %</th><th>Disks</th><th>Services</th><th>Errors (24h)</th><th>Status</th>
+  </tr>
+  <tr>
+    <td>WINWEB01<br>192.168.122.247</td>
+    <td>Microsoft Windows Server 2022 Standard Evaluation</td>
+    <td>0.1</td>
+    <td>1</td>
+    <td class="ok">14.9</td>
+    <td>
+      C: 47 GB free of 59.4 GB (79.2%)<br>
+    </td>
+    <td>
+      EventLog: Running<br>
+      LanmanServer: Running<br>
+      W3SVC: Running<br>
+      WinRM: Running<br>
+    </td>
+    <td>4</td>
+    <td class="ok">
+      Healthy
+    </td>
+  </tr>
+</table>
+</body>
+</html>

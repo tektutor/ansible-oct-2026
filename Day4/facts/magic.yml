@@ -1,0 +1,28 @@
+---
+- name: Explore the magic variables
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Who am I?
+      ansible.builtin.debug:
+        msg:
+          - "Inventory name: {{ inventory_hostname }}"
+          - "Real hostname: {{ ansible_facts['hostname'] }}"
+          - "My groups: {{ group_names }}"
+
+    - name: Show every group and its hosts
+      ansible.builtin.debug:
+        msg: "{{ groups }}"
+      run_once: true
+
+    - name: Read another host's data through hostvars
+      ansible.builtin.debug:
+        msg: "{{ item }} connects to {{ hostvars[item]['ansible_host'] | default(item) }}"
+      loop: "{{ groups['all'] }}"
+      run_once: true
+
+    - name: Run a task only on the first host of a group
+      ansible.builtin.debug:
+        msg: "I am the first host in the play"
+      when: inventory_hostname == ansible_play_hosts[0]

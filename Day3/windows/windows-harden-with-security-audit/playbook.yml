@@ -1,0 +1,108 @@
+---
+- name: Apply and audit a Windows security baseline
+  hosts: windows
+  gather_facts: false
+
+  vars:
+    password_policy:
+      - { key: MinimumPasswordLength, value: 12 }
+      - { key: PasswordComplexity, value: 1 }
+      - { key: PasswordHistorySize, value: 24 }
+      - { key: MinimumPasswordAge, value: 1 }
+
+    audit_subcategories:
+      - Logon
+      - User Account Management
+      - Security Group Management
+
+    registry_settings:
+      - desc: Disable the SMBv1 server
+        path: HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters
+        name: SMB1
+        data: 0
+      - desc: Disable LLMNR name resolution
+        path: HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient
+        name: EnableMultiCast
+        data: 0
+      - desc: Hide the last signed-in user name
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System
+        name: dontdisplaylastusername
+        data: 1
+      - desc: Disable AutoRun on all drives
+        path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer
+        name: NoDriveTypeAutoRun
+        data: 255
+      - desc: Require Network Level Authentication for RDP
+        path: HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp
+        name: UserAuthentication
+        data: 1
+
+    disabled_services:
+      - Spooler
+      - RemoteRegistry
+
+  tasks:
+    - name: Enforce the password policy
+      community.windows.win_security_policy:
+        section: System Access
+        key: "{{ item.key }}"
+        value: "{{ item.value }}"
+      loop: "{{ password_policy }}"
+      loop_control:
+        label: "{{ item.key }} = {{ item.value }}"
+      tags: accounts
+
+    - name: Disable the Guest account
+      ansible.windows.win_user:
+        name: Guest
+        account_disabled: true
+      tags: accounts
+
+    - name: Audit success and failure for key security events
+      ansible.windows.win_audit_policy_system:
+        subcategory: "{{ item }}"
+        audit_type:
+          - success
+          - failure
+      loop: "{{ audit_subcategories }}"
+      tags: audit
+
+    - name: Apply the registry hardening settings
+      ansible.windows.win_regedit:
+        path: "{{ item.path }}"
+        name: "{{ item.name }}"
+        data: "{{ item.data }}"
+        type: dword
+      loop: "{{ registry_settings }}"
+      loop_control:
+        label: "{{ item.desc }}"
+      tags: registry
+
+    - name: Stop and disable services this server does not need
+      ansible.windows.win_service:
+        name: "{{ item }}"
+        state: stopped
+        start_mode: disabled
+      loop: "{{ disabled_services }}"
+      tags: services
+
+    - name: Turn the firewall on for every network profile
+      ansible.windows.win_firewall:
+        state: enabled
+        profiles:
+          - Domain
+          - Private
+          - Public
+      tags: firewall
+
+    - name: Read the effective account policy
+      ansible.windows.win_command: net accounts
+      register: account_policy
+      changed_when: false
+      check_mode: false
+      tags: verify
+
+    - name: Show the effective account policy
+      ansible.builtin.debug:
+        msg: "{{ account_policy.stdout_lines | select | list }}"
+      tags: verify

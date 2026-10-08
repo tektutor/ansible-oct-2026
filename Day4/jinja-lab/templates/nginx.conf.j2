@@ -1,0 +1,43 @@
+#jinja2: lstrip_blocks: True
+{# Builds one "server" line for the upstream block #}
+{% macro upstream_server(host) -%}
+{% set hv = hostvars[host] -%}
+server {{ hv.ansible_host }}:{{ hv.app_port | default(8080) }}
+{%- if hv.weight is defined %} weight={{ hv.weight }}{% endif %}
+{%- if hv.backup | default(false) | bool %} backup{% endif %};
+{%- endmacro %}
+# {{ ansible_managed }}
+# Environment: {{ env_name }}
+# Backends: {{ groups['web'] | sort | join(', ') }}
+
+worker_processes auto;
+
+events {
+    worker_connections {{ nginx.worker_connections }};
+}
+
+http {
+    upstream app_backend {
+        least_conn;
+    {% for host in groups['web'] | sort %}
+        {{ upstream_server(host) }}
+    {% else %}
+        server 127.0.0.1:8080;
+    {% endfor %}
+    }
+
+    server {
+        listen {{ nginx.listen_port }};
+        server_name {{ nginx.server_name }};
+
+        location / {
+            proxy_pass http://app_backend;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        location /health {
+            return 200 "{{ env_name }} ok\n";
+        }
+    }
+}
