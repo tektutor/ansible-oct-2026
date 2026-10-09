@@ -78,12 +78,24 @@ ansible-galaxy collection install azure.azcollection
 pip install -r ~/ansible-venv/lib/python3.14/site-packages/ansible_collections/azure/azcollection/requirements.txt
 ```
 
-Check the inventory
+Check and update your resource group name
 ```
-./azure-env.sh ansible-inventory -i inventory.azure_rm.yml --graph
+grep -A1 include_vm_resource_groups ansible/inventory.azure_rm.yml
+grep existing_resource_group_name terraform.tfvars
+
+
 ```
 
 Run the playbook
 ```
-./azure-env.sh ansible-playbook -i inventory.azure_rm.yml nginx.yml
+
+sed -i 's/your-resource-group/RG-CUST-385-U14/' ansible/inventory.azure_rm.yml
+grep -A1 include_vm_resource_groups ansible/inventory.azure_rm.yml
+
+
+./azure-env.sh bash -c 'az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_SECRET" --tenant "$AZURE_TENANT" -o none && az vm list -g RG-CUST-385-U14 -d -o table'
+
+./azure-env.sh ansible-inventory -i inventory.azure_rm.yml --graph
+
+./azure-env.sh ansible-playbook -i inventory.azure_rm.yml install-nginx-playbook.yml
 ```
