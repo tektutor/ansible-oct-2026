@@ -1,4 +1,3 @@
-<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/17b6cd4f-f027-4372-88ab-5884c4ad0634" /># Day 5
 
 ## Install Azure CLI tool in Ubuntu
 ```
