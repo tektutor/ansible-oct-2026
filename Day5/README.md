@@ -64,9 +64,14 @@ cd ~/ansible-oct-2026
 git pull
 
 cd Day5/azure
+
+# Let's use ansible in virtual environment
+python3 -m venv ~/ansible-venv
+source ~/ansible-venv/bin/activate
+
 ansible-galaxy collection install -r ansible/requirements.yml
 pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
-
+```
 
 Check the inventory
 ```
