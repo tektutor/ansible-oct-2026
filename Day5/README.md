@@ -103,7 +103,7 @@ grep -A1 include_vm_resource_groups ansible/inventory.azure_rm.yml
 
 ## Lab - VyOS Network Lab
 ```
-sudo cp ~/Downloads /var/lib/libvirt/images/vyos.iso
+sudo cp ~/Downloads/vyos.iso /var/lib/libvirt/images/vyos.iso
 
 sudo virt-install --name vyos-vm --memory 1024 --vcpus 1 \
   --disk size=4 --cdrom /var/lib/libvirt/images/vyos.iso \
