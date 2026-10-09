@@ -75,7 +75,7 @@ pip install ansible pywinrm
 hash -r
 ansible-galaxy collection install azure.azcollection
 
-pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
+pip install -r ~/ansible-venv/lib/python3.14/site-packages/ansible_collections/azure/azcollection/requirements.txt
 ```
 
 Check the inventory
