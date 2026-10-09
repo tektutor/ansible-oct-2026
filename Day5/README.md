@@ -56,3 +56,24 @@ Run Terraform
 
 <img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/087e84c4-f3e3-45d0-885f-4b1394f6e7c2" />
 <img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/5f4a810b-8c7c-427f-898d-351dc00f48d4" />
+
+## Lab - Install nginx in Ubuntu, RHEL and Windows Azure vms
+Install the required tools if they are not there
+```
+cd ~/ansible-oct-2026
+git pull
+
+cd Day5/azure
+ansible-galaxy collection install -r ansible/requirements.yml
+pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
+
+
+Check the inventory
+```
+./azure-env.sh ansible-inventory -i inventory.azure_rm.yml --graph
+```
+
+Run the playbook
+```
+./azure-env.sh ansible-playbook -i inventory.azure_rm.yml nginx.yml
+```
