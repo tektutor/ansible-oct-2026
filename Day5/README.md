@@ -146,10 +146,12 @@ Playbook
 <pre>
 - name: Automate VyOS routers
   hosts: routers
+
   tasks:
   - name: Collect device facts
     vyos.vyos.vyos_facts:
       gather_subset: min
+
   - name: Print VyOS version
     debug: var=ansbile_net_version
 
@@ -167,7 +169,8 @@ Playbook
       commands:
       - show interfaces
       - show ip route static
-    register result
+    register: result
+
   - name: Print verification output
     debug: var=result.stdout_lines
 </pre>
