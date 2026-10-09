@@ -1,6 +1,6 @@
 ---
 - name: Blocks and error handling
-  hosts: app1
+  hosts: localhost 
   gather_facts: false
 
   vars:

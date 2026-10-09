@@ -1,0 +1,52 @@
+---
+- name: Install nginx on Ubuntu and RHEL
+  hosts: linux
+  become: true
+  tasks:
+    - name: Install nginx on Ubuntu
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: true
+        lock_timeout: 300
+      when: ansible_os_family == "Debian"
+
+    - name: Install nginx on RHEL
+      ansible.builtin.dnf:
+        name: nginx
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Start and enable nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+    - name: Check that nginx answers on port 80
+      ansible.builtin.uri:
+        url: http://localhost
+        status_code: 200
+
+- name: Install nginx on Windows
+  hosts: windows
+  vars:
+    # IIS already uses port 80 if you ran site.yml, so nginx listens on 8080.
+    nginx_port: 8080
+  tasks:
+    - name: Install nginx with Chocolatey
+      chocolatey.chocolatey.win_chocolatey:
+        name: nginx
+        state: present
+        package_params: "/port:{{ nginx_port }}"
+
+    - name: Start nginx service and set it to start at boot
+      ansible.windows.win_service:
+        name: nginx
+        state: started
+        start_mode: auto
+
+    - name: Check that nginx answers
+      ansible.windows.win_uri:
+        url: "http://localhost:{{ nginx_port }}"
+        status_code: 200

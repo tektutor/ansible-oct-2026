@@ -1,6 +1,6 @@
 ---
 - name: Prepare the servers
-  hosts: app
+  hosts: localhost 
   gather_facts: false
   tags: prepare
 
@@ -17,7 +17,7 @@
         mode: "0755"
 
 - name: Deploy the application
-  hosts: app
+  hosts: localhost
   gather_facts: false
 
   roles:

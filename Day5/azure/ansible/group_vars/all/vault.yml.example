@@ -1,0 +1,20 @@
+# Copy this file to vault.yml, fill in your values, then encrypt it:
+#   ansible-vault encrypt group_vars/all/vault.yml
+# Keep one "key: value" pair per line. Leave a value as "" if you do not have it.
+
+# --- Option A: Azure user account (username + password) ---
+# Use the password you set after your first portal sign-in, not the temporary one.
+vault_azure_username: "user@yourtenant.onmicrosoft.com"
+vault_azure_password: "your-new-password"
+
+# --- Option B: service principal (leave both "" to use Option A) ---
+vault_azure_client_id: ""
+vault_azure_client_secret: ""
+
+# Optional for Option A, required for Option B.
+# If empty, run.sh uses the default subscription of the signed-in user.
+vault_azure_subscription_id: ""
+vault_azure_tenant_id: ""
+
+# Required. 12+ characters with upper case, lower case, digit and symbol.
+vault_windows_admin_password: "Use-12-Or-More-Chars-1!"

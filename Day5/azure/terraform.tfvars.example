@@ -1,0 +1,5 @@
+# Copy to terraform.tfvars and edit. Terraform loads terraform.tfvars automatically.
+existing_resource_group_name = "your-resource-group"
+# prefix   = "demo"
+# location = "eastus"
+# vm_size  = "Standard_B2s"

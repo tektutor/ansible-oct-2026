@@ -621,3 +621,402 @@ Origin: /home/jegan/ansible-oct-2026/Day1/ansible/install-nginx-playbook.yml:41:
 2026-10-07 18:17:16,371 p=285920 u=jegan n=ansible INFO| /
 2026-10-07 18:17:16,471 p=285920 u=jegan n=ansible INFO| Installing 'community.windows:3.3.0' to '/home/jegan/.ansible/collections/ansible_collections/community/windows'
 2026-10-07 18:17:16,471 p=285920 u=jegan n=ansible INFO| community.windows:3.3.0 was installed successfully
+2026-10-08 16:28:11,237 p=219809 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Ubuntu servers] ******************************************************************
+2026-10-08 16:28:11,242 p=219809 u=jegan n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************
+2026-10-08 16:28:12,270 p=219809 u=jegan n=ansible WARNING| [WARNING]: Host 'ubuntu2-jegan' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:28:12,271 p=219809 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:28:12,304 p=219809 u=jegan n=ansible WARNING| [WARNING]: Host 'ubuntu1-jegan' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:28:12,304 p=219809 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:28:12,309 p=219809 u=jegan n=ansible INFO| TASK [Install nginx in ubuntu ansible node] ********************************************************************************************
+2026-10-08 16:28:35,446 p=219809 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:28:38,735 p=219809 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:28:38,739 p=219809 u=jegan n=ansible INFO| TASK [Create the custom web root folder] ***********************************************************************************************
+2026-10-08 16:28:39,047 p=219809 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:28:39,048 p=219809 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:28:39,053 p=219809 u=jegan n=ansible INFO| TASK [Retrieve the IP address of the ubuntu node] **************************************************************************************
+2026-10-08 16:28:39,375 p=219809 u=jegan n=ansible INFO| changed: [ubuntu2-jegan]
+2026-10-08 16:28:39,377 p=219809 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-08 16:28:39,384 p=219809 u=jegan n=ansible INFO| TASK [debug] ***************************************************************************************************************************
+2026-10-08 16:28:39,404 p=219809 u=jegan n=ansible INFO| ok: [ubuntu1-jegan] => {
+    "ip": {
+        "changed": true,
+        "cmd": "hostname -i ",
+        "delta": "0:00:00.003557",
+        "end": "2026-10-08 10:58:39.344056",
+        "failed": false,
+        "msg": "",
+        "rc": 0,
+        "start": "2026-10-08 10:58:39.340499",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "172.17.0.2",
+        "stdout_lines": [
+            "172.17.0.2"
+        ]
+    }
+}
+2026-10-08 16:28:39,410 p=219809 u=jegan n=ansible INFO| ok: [ubuntu2-jegan] => {
+    "ip": {
+        "changed": true,
+        "cmd": "hostname -i ",
+        "delta": "0:00:00.003342",
+        "end": "2026-10-08 10:58:39.344032",
+        "failed": false,
+        "msg": "",
+        "rc": 0,
+        "start": "2026-10-08 10:58:39.340690",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "172.17.0.3",
+        "stdout_lines": [
+            "172.17.0.3"
+        ]
+    }
+}
+2026-10-08 16:28:39,413 p=219809 u=jegan n=ansible INFO| TASK [Customize nginx web server to use our custom folder while serving web page] ******************************************************
+2026-10-08 16:28:39,928 p=219809 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:28:39,929 p=219809 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:28:39,941 p=219809 u=jegan n=ansible INFO| TASK [Deploy custom web page] **********************************************************************************************************
+2026-10-08 16:28:40,373 p=219809 u=jegan n=ansible WARNING| [WARNING]: Deprecation warnings can be disabled by setting `deprecation_warnings=False` in ansible.cfg.
+
+2026-10-08 16:28:40,374 p=219809 u=jegan n=ansible INFO| [DEPRECATION WARNING]: INJECT_FACTS_AS_VARS default to `True` is deprecated, top-level facts will not be auto injected after the change. This feature will be removed from ansible-core version 2.24.
+Origin: /home/jegan/ansible-oct-2026/Day1/ansible/index.html.j2
+
+Use `ansible_facts["fact_name"]` (no `ansible_` prefix) instead.
+
+
+2026-10-08 16:28:40,374 p=219809 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:28:40,374 p=219809 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:28:40,386 p=219809 u=jegan n=ansible INFO| TASK [Restart nginx web server in Ubuntu servers to apply config changes] **************************************************************
+2026-10-08 16:28:41,836 p=219809 u=jegan n=ansible INFO| changed: [ubuntu2-jegan]
+2026-10-08 16:28:41,840 p=219809 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-08 16:28:41,843 p=219809 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Rocky server] ********************************************************************
+2026-10-08 16:28:41,846 p=219809 u=jegan n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************
+2026-10-08 16:28:42,593 p=219809 u=jegan n=ansible WARNING| [WARNING]: Host 'rocky1-jegan' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:28:42,593 p=219809 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-08 16:28:42,695 p=219809 u=jegan n=ansible WARNING| [WARNING]: Host 'rocky2-jegan' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:28:42,695 p=219809 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-08 16:28:42,703 p=219809 u=jegan n=ansible INFO| TASK [Install Extra Packages for Enterprise Linux (EPEL)] ******************************************************************************
+2026-10-08 16:30:07,817 p=219809 u=jegan n=ansible ERROR| [ERROR]: User interrupted execution
+
+2026-10-08 16:30:23,791 p=222201 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Ubuntu servers] ******************************************************************
+2026-10-08 16:30:23,795 p=222201 u=jegan n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************
+2026-10-08 16:30:24,758 p=222201 u=jegan n=ansible WARNING| [WARNING]: Host 'ubuntu1-jegan' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:30:24,758 p=222201 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:30:24,760 p=222201 u=jegan n=ansible INFO| TASK [Install nginx in ubuntu ansible node] ********************************************************************************************
+2026-10-08 16:30:37,927 p=222201 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:30:37,931 p=222201 u=jegan n=ansible INFO| TASK [Create the custom web root folder] ***********************************************************************************************
+2026-10-08 16:30:38,260 p=222201 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:30:38,263 p=222201 u=jegan n=ansible INFO| TASK [Retrieve the IP address of the ubuntu node] **************************************************************************************
+2026-10-08 16:30:38,592 p=222201 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-08 16:30:38,601 p=222201 u=jegan n=ansible INFO| TASK [debug] ***************************************************************************************************************************
+2026-10-08 16:30:38,622 p=222201 u=jegan n=ansible INFO| ok: [ubuntu1-jegan] => {
+    "ip": {
+        "changed": true,
+        "cmd": "hostname -i ",
+        "delta": "0:00:00.002792",
+        "end": "2026-10-08 11:00:38.553863",
+        "failed": false,
+        "msg": "",
+        "rc": 0,
+        "start": "2026-10-08 11:00:38.551071",
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "172.17.0.2",
+        "stdout_lines": [
+            "172.17.0.2"
+        ]
+    }
+}
+2026-10-08 16:30:38,625 p=222201 u=jegan n=ansible INFO| TASK [Customize nginx web server to use our custom folder while serving web page] ******************************************************
+2026-10-08 16:30:39,165 p=222201 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:30:39,168 p=222201 u=jegan n=ansible INFO| TASK [Deploy custom web page] **********************************************************************************************************
+2026-10-08 16:30:39,654 p=222201 u=jegan n=ansible WARNING| [WARNING]: Deprecation warnings can be disabled by setting `deprecation_warnings=False` in ansible.cfg.
+
+2026-10-08 16:30:39,655 p=222201 u=jegan n=ansible INFO| [DEPRECATION WARNING]: INJECT_FACTS_AS_VARS default to `True` is deprecated, top-level facts will not be auto injected after the change. This feature will be removed from ansible-core version 2.24.
+Origin: /home/jegan/ansible-oct-2026/Day1/ansible/index.html.j2
+
+Use `ansible_facts["fact_name"]` (no `ansible_` prefix) instead.
+
+
+2026-10-08 16:30:39,655 p=222201 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:30:39,657 p=222201 u=jegan n=ansible INFO| TASK [Restart nginx web server in Ubuntu servers to apply config changes] **************************************************************
+2026-10-08 16:30:41,077 p=222201 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-08 16:30:41,079 p=222201 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Rocky server] ********************************************************************
+2026-10-08 16:30:41,079 p=222201 u=jegan n=ansible INFO| skipping: no hosts matched
+2026-10-08 16:30:41,079 p=222201 u=jegan n=ansible INFO| PLAY RECAP *****************************************************************************************************************************
+2026-10-08 16:30:41,079 p=222201 u=jegan n=ansible INFO| ubuntu1-jegan              : ok=8    changed=2    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2026-10-08 16:32:32,595 p=223761 u=jegan n=ansible ERROR| [ERROR]: the playbook: playbook.yml could not be found
+
+2026-10-08 16:32:50,384 p=223910 u=jegan n=ansible WARNING| [WARNING]: Unable to parse /home/jegan/ansible-oct-2026/Day1/ansible/inventory.ini as an inventory source
+
+2026-10-08 16:32:50,384 p=223910 u=jegan n=ansible WARNING| [WARNING]: No inventory was parsed, only implicit localhost is available
+
+2026-10-08 16:32:50,386 p=223910 u=jegan n=ansible WARNING| [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+
+2026-10-08 16:32:50,471 p=223910 u=jegan n=ansible WARNING| [WARNING]: Could not match supplied host pattern, ignoring: ubuntu
+
+2026-10-08 16:32:50,472 p=223910 u=jegan n=ansible WARNING| [WARNING]: Could not match supplied host pattern, ignoring: rocky
+
+2026-10-08 16:32:50,472 p=223910 u=jegan n=ansible INFO| playbook: install-nginx-playbook.yml
+2026-10-08 16:33:01,253 p=224023 u=jegan n=ansible INFO| playbook: install-nginx-playbook.yml
+2026-10-08 16:33:20,983 p=224205 u=jegan n=ansible ERROR| [ERROR]: the playbook: playbook.yml could not be found
+
+2026-10-08 16:33:31,701 p=224297 u=jegan n=ansible INFO| playbook: install-nginx-playbook.yml
+2026-10-08 16:33:31,701 p=224297 u=jegan n=ansible INFO|   play #1 (ubuntu): This playbook will install nginx web servers on Ubuntu servers	TAGS: []
+    pattern: ['ubuntu']
+    hosts (2):
+      ubuntu2-jegan
+      ubuntu1-jegan
+2026-10-08 16:33:31,701 p=224297 u=jegan n=ansible INFO|   play #2 (rocky): This playbook will install nginx web servers on Rocky server	TAGS: []
+    pattern: ['rocky']
+    hosts (2):
+      rocky1-jegan
+      rocky2-jegan
+2026-10-08 16:34:35,907 p=224840 u=jegan n=ansible INFO| playbook: install-nginx-playbook.yml
+2026-10-08 16:34:35,907 p=224840 u=jegan n=ansible INFO|   play #1 (ubuntu): This playbook will install nginx web servers on Ubuntu servers	TAGS: []
+2026-10-08 16:34:35,907 p=224840 u=jegan n=ansible INFO|     tasks:
+      Install nginx in ubuntu ansible node	TAGS: []
+      Create the custom web root folder	TAGS: []
+      Retrieve the IP address of the ubuntu node	TAGS: []
+      debug	TAGS: []
+      Customize nginx web server to use our custom folder while serving web page	TAGS: []
+      Deploy custom web page	TAGS: []
+      Restart nginx web server in Ubuntu servers to apply config changes	TAGS: []
+
+2026-10-08 16:34:35,907 p=224840 u=jegan n=ansible INFO|   play #2 (rocky): This playbook will install nginx web servers on Rocky server	TAGS: []
+2026-10-08 16:34:35,908 p=224840 u=jegan n=ansible INFO|     tasks:
+      Install Extra Packages for Enterprise Linux (EPEL)	TAGS: []
+      Install nginx in  Rocky ansible node	TAGS: []
+      Check if nginx server is already running	TAGS: []
+      debug	TAGS: []
+      Create the custom web root folder	TAGS: []
+      Customize nginx web server to use our custom folder while serving web page	TAGS: []
+      Retrieve the IP address of the ubuntu node	TAGS: []
+      Deploy custom web page	TAGS: []
+      Stop the server if it is running already	TAGS: []
+      Start nginx web server	TAGS: []
+
+2026-10-08 16:35:42,162 p=225323 u=jegan n=ansible INFO| playbook: install-nginx-playbook.yml
+2026-10-08 16:35:42,162 p=225323 u=jegan n=ansible INFO|   play #1 (ubuntu): This playbook will install nginx web servers on Ubuntu servers	TAGS: []
+2026-10-08 16:35:42,163 p=225323 u=jegan n=ansible INFO|     tasks:
+
+2026-10-08 16:35:42,163 p=225323 u=jegan n=ansible INFO|   play #2 (rocky): This playbook will install nginx web servers on Rocky server	TAGS: []
+2026-10-08 16:35:42,163 p=225323 u=jegan n=ansible INFO|     tasks:
+
+2026-10-08 16:36:39,778 p=225859 u=jegan n=ansible WARNING| [WARNING]: Unable to parse /home/jegan/ansible-oct-2026/Day1/ansible/inventory.ini as an inventory source
+
+2026-10-08 16:36:39,778 p=225859 u=jegan n=ansible WARNING| [WARNING]: No inventory was parsed, only implicit localhost is available
+
+2026-10-08 16:36:39,780 p=225859 u=jegan n=ansible WARNING| [WARNING]: provided hosts list is empty, only localhost is available. Note that the implicit localhost does not match 'all'
+
+2026-10-08 16:36:39,874 p=225859 u=jegan n=ansible WARNING| [WARNING]: Could not match supplied host pattern, ignoring: ubuntu
+
+2026-10-08 16:36:39,874 p=225859 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Ubuntu servers] ******************************************************************
+2026-10-08 16:36:39,874 p=225859 u=jegan n=ansible INFO| skipping: no hosts matched
+2026-10-08 16:36:39,875 p=225859 u=jegan n=ansible WARNING| [WARNING]: Could not match supplied host pattern, ignoring: rocky
+
+2026-10-08 16:36:39,875 p=225859 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Rocky server] ********************************************************************
+2026-10-08 16:36:39,875 p=225859 u=jegan n=ansible INFO| skipping: no hosts matched
+2026-10-08 16:36:39,875 p=225859 u=jegan n=ansible INFO| PLAY RECAP *****************************************************************************************************************************
+2026-10-08 16:36:47,667 p=225947 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Ubuntu servers] ******************************************************************
+2026-10-08 16:36:47,671 p=225947 u=jegan n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************
+2026-10-08 16:36:48,605 p=225947 u=jegan n=ansible WARNING| [WARNING]: Host 'ubuntu2-jegan' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:36:48,605 p=225947 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:36:48,609 p=225947 u=jegan n=ansible WARNING| [WARNING]: Host 'ubuntu1-jegan' is using the discovered Python interpreter at '/usr/bin/python3.12', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:36:48,609 p=225947 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:36:48,612 p=225947 u=jegan n=ansible INFO| TASK [Install nginx in ubuntu ansible node] ********************************************************************************************
+2026-10-08 16:36:50,371 p=225947 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:36:50,382 p=225947 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:36:50,384 p=225947 u=jegan n=ansible INFO| TASK [Create the custom web root folder] ***********************************************************************************************
+2026-10-08 16:36:50,697 p=225947 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:36:50,697 p=225947 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:36:50,700 p=225947 u=jegan n=ansible INFO| TASK [Retrieve the IP address of the ubuntu node] **************************************************************************************
+2026-10-08 16:36:50,979 p=225947 u=jegan n=ansible INFO| skipping: [ubuntu1-jegan]
+2026-10-08 16:36:50,983 p=225947 u=jegan n=ansible INFO| skipping: [ubuntu2-jegan]
+2026-10-08 16:36:50,985 p=225947 u=jegan n=ansible INFO| TASK [debug] ***************************************************************************************************************************
+2026-10-08 16:36:50,997 p=225947 u=jegan n=ansible INFO| ok: [ubuntu1-jegan] => {
+    "ip": {
+        "changed": false,
+        "cmd": "hostname -i ",
+        "delta": null,
+        "end": null,
+        "failed": false,
+        "msg": "Command would have run if not in check mode",
+        "rc": 0,
+        "skipped": true,
+        "start": null,
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "",
+        "stdout_lines": []
+    }
+}
+2026-10-08 16:36:50,998 p=225947 u=jegan n=ansible INFO| ok: [ubuntu2-jegan] => {
+    "ip": {
+        "changed": false,
+        "cmd": "hostname -i ",
+        "delta": null,
+        "end": null,
+        "failed": false,
+        "msg": "Command would have run if not in check mode",
+        "rc": 0,
+        "skipped": true,
+        "start": null,
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "",
+        "stdout_lines": []
+    }
+}
+2026-10-08 16:36:51,000 p=225947 u=jegan n=ansible INFO| TASK [Customize nginx web server to use our custom folder while serving web page] ******************************************************
+2026-10-08 16:36:51,478 p=225947 u=jegan n=ansible INFO| ok: [ubuntu1-jegan]
+2026-10-08 16:36:51,480 p=225947 u=jegan n=ansible INFO| ok: [ubuntu2-jegan]
+2026-10-08 16:36:51,482 p=225947 u=jegan n=ansible INFO| TASK [Deploy custom web page] **********************************************************************************************************
+2026-10-08 16:36:52,180 p=225947 u=jegan n=ansible INFO| [0;31m--- before: /var/html/index.html[0m
+[0;31m[0m[0;32m+++ after: /home/jegan/.ansible/tmp/ansible-local-225947rvko8qa0/tmphcj20umy/index.html.j2[0m
+[0;32m[0m[0;36m@@ -5,7 +5,7 @@[0m
+[0;36m[0m 	<body>
+ 		<h3>Linux distribution: Ubuntu v24.04</h3>
+ 		<h3>Hostname          : ubuntu-jegan</h3>
+[0;31m-		<h3>IP addresss       : 172.17.0.2</h3>[0m
+[0;31m[0m[0;32m+		<h3>IP addresss       : </h3>[0m
+[0;32m[0m 		<h3>Kernel           : #34-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:29:37 UTC 2026</h3>
+ 	</body>
+ </html>
+
+
+2026-10-08 16:36:52,180 p=225947 u=jegan n=ansible WARNING| [WARNING]: Deprecation warnings can be disabled by setting `deprecation_warnings=False` in ansible.cfg.
+
+2026-10-08 16:36:52,180 p=225947 u=jegan n=ansible INFO| [DEPRECATION WARNING]: INJECT_FACTS_AS_VARS default to `True` is deprecated, top-level facts will not be auto injected after the change. This feature will be removed from ansible-core version 2.24.
+Origin: /home/jegan/ansible-oct-2026/Day1/ansible/index.html.j2
+
+Use `ansible_facts["fact_name"]` (no `ansible_` prefix) instead.
+
+
+2026-10-08 16:36:52,180 p=225947 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-08 16:36:52,180 p=225947 u=jegan n=ansible INFO| [0;31m--- before: /var/html/index.html[0m
+[0;31m[0m[0;32m+++ after: /home/jegan/.ansible/tmp/ansible-local-225947rvko8qa0/tmp8y8behps/index.html.j2[0m
+[0;32m[0m[0;36m@@ -5,7 +5,7 @@[0m
+[0;36m[0m 	<body>
+ 		<h3>Linux distribution: Ubuntu v24.04</h3>
+ 		<h3>Hostname          : ubuntu2-jegan</h3>
+[0;31m-		<h3>IP addresss       : 172.17.0.3</h3>[0m
+[0;31m[0m[0;32m+		<h3>IP addresss       : </h3>[0m
+[0;32m[0m 		<h3>Kernel           : #34-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:29:37 UTC 2026</h3>
+ 	</body>
+ </html>
+
+
+2026-10-08 16:36:52,181 p=225947 u=jegan n=ansible INFO| changed: [ubuntu2-jegan]
+2026-10-08 16:36:52,183 p=225947 u=jegan n=ansible INFO| TASK [Restart nginx web server in Ubuntu servers to apply config changes] **************************************************************
+2026-10-08 16:36:52,512 p=225947 u=jegan n=ansible INFO| changed: [ubuntu1-jegan]
+2026-10-08 16:36:52,515 p=225947 u=jegan n=ansible INFO| changed: [ubuntu2-jegan]
+2026-10-08 16:36:52,518 p=225947 u=jegan n=ansible INFO| PLAY [This playbook will install nginx web servers on Rocky server] ********************************************************************
+2026-10-08 16:36:52,520 p=225947 u=jegan n=ansible INFO| TASK [Gathering Facts] *****************************************************************************************************************
+2026-10-08 16:36:53,392 p=225947 u=jegan n=ansible WARNING| [WARNING]: Host 'rocky1-jegan' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:36:53,393 p=225947 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-08 16:36:53,395 p=225947 u=jegan n=ansible WARNING| [WARNING]: Host 'rocky2-jegan' is using the discovered Python interpreter at '/usr/bin/python3.9', but future installation of another Python interpreter could cause a different interpreter to be discovered. See https://docs.ansible.com/ansible-core/2.20/reference_appendices/interpreter_discovery.html for more information.
+
+2026-10-08 16:36:53,395 p=225947 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-08 16:36:53,397 p=225947 u=jegan n=ansible INFO| TASK [Install Extra Packages for Enterprise Linux (EPEL)] ******************************************************************************
+2026-10-08 16:37:37,317 p=225947 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-08 16:37:39,116 p=225947 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-08 16:37:39,120 p=225947 u=jegan n=ansible INFO| TASK [Install nginx in  Rocky ansible node] ********************************************************************************************
+2026-10-08 16:37:40,007 p=225947 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-08 16:37:40,008 p=225947 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-08 16:37:40,011 p=225947 u=jegan n=ansible INFO| TASK [Check if nginx server is already running] ****************************************************************************************
+2026-10-08 16:37:40,345 p=225947 u=jegan n=ansible INFO| skipping: [rocky2-jegan]
+2026-10-08 16:37:40,346 p=225947 u=jegan n=ansible INFO| skipping: [rocky1-jegan]
+2026-10-08 16:37:40,352 p=225947 u=jegan n=ansible INFO| TASK [debug] ***************************************************************************************************************************
+2026-10-08 16:37:40,373 p=225947 u=jegan n=ansible INFO| ok: [rocky1-jegan] => {
+    "output": {
+        "changed": false,
+        "cmd": "curl localhost",
+        "delta": null,
+        "end": null,
+        "failed": false,
+        "msg": "Command would have run if not in check mode",
+        "rc": 0,
+        "skipped": true,
+        "start": null,
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "",
+        "stdout_lines": []
+    }
+}
+2026-10-08 16:37:40,374 p=225947 u=jegan n=ansible INFO| ok: [rocky2-jegan] => {
+    "output": {
+        "changed": false,
+        "cmd": "curl localhost",
+        "delta": null,
+        "end": null,
+        "failed": false,
+        "msg": "Command would have run if not in check mode",
+        "rc": 0,
+        "skipped": true,
+        "start": null,
+        "stderr": "",
+        "stderr_lines": [],
+        "stdout": "",
+        "stdout_lines": []
+    }
+}
+2026-10-08 16:37:40,377 p=225947 u=jegan n=ansible INFO| TASK [Create the custom web root folder] ***********************************************************************************************
+2026-10-08 16:37:40,693 p=225947 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-08 16:37:40,701 p=225947 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-08 16:37:40,706 p=225947 u=jegan n=ansible INFO| TASK [Customize nginx web server to use our custom folder while serving web page] ******************************************************
+2026-10-08 16:37:41,303 p=225947 u=jegan n=ansible INFO| ok: [rocky1-jegan]
+2026-10-08 16:37:41,304 p=225947 u=jegan n=ansible INFO| ok: [rocky2-jegan]
+2026-10-08 16:37:41,306 p=225947 u=jegan n=ansible INFO| TASK [Retrieve the IP address of the ubuntu node] **************************************************************************************
+2026-10-08 16:37:41,553 p=225947 u=jegan n=ansible INFO| skipping: [rocky2-jegan]
+2026-10-08 16:37:41,556 p=225947 u=jegan n=ansible INFO| skipping: [rocky1-jegan]
+2026-10-08 16:37:41,558 p=225947 u=jegan n=ansible INFO| TASK [Deploy custom web page] **********************************************************************************************************
+2026-10-08 16:37:42,240 p=225947 u=jegan n=ansible INFO| [0;31m--- before: /var/html/index.html[0m
+[0;31m[0m[0;32m+++ after: /home/jegan/.ansible/tmp/ansible-local-225947rvko8qa0/tmplx41hv1s/index.html.j2[0m
+[0;32m[0m[0;36m@@ -5,7 +5,7 @@[0m
+[0;36m[0m 	<body>
+ 		<h3>Linux distribution: Rocky v9.3</h3>
+ 		<h3>Hostname          : rocky2-jegan</h3>
+[0;31m-		<h3>IP addresss       : 172.17.0.5</h3>[0m
+[0;31m[0m[0;32m+		<h3>IP addresss       : </h3>[0m
+[0;32m[0m 		<h3>Kernel           : #34-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:29:37 UTC 2026</h3>
+ 	</body>
+ </html>
+
+
+2026-10-08 16:37:42,241 p=225947 u=jegan n=ansible INFO| changed: [rocky2-jegan]
+2026-10-08 16:37:42,244 p=225947 u=jegan n=ansible INFO| [0;31m--- before: /var/html/index.html[0m
+[0;31m[0m[0;32m+++ after: /home/jegan/.ansible/tmp/ansible-local-225947rvko8qa0/tmpuskdlfuq/index.html.j2[0m
+[0;32m[0m[0;36m@@ -5,7 +5,7 @@[0m
+[0;36m[0m 	<body>
+ 		<h3>Linux distribution: Rocky v9.3</h3>
+ 		<h3>Hostname          : rocky1-jegan</h3>
+[0;31m-		<h3>IP addresss       : 172.17.0.4</h3>[0m
+[0;31m[0m[0;32m+		<h3>IP addresss       : </h3>[0m
+[0;32m[0m 		<h3>Kernel           : #34-Ubuntu SMP PREEMPT_DYNAMIC Wed Sep  2 14:29:37 UTC 2026</h3>
+ 	</body>
+ </html>
+
+
+2026-10-08 16:37:42,245 p=225947 u=jegan n=ansible INFO| changed: [rocky1-jegan]
+2026-10-08 16:37:42,247 p=225947 u=jegan n=ansible INFO| TASK [Stop the server if it is running already] ****************************************************************************************
+2026-10-08 16:37:42,565 p=225947 u=jegan n=ansible INFO| skipping: [rocky1-jegan]
+2026-10-08 16:37:42,566 p=225947 u=jegan n=ansible INFO| skipping: [rocky2-jegan]
+2026-10-08 16:37:42,569 p=225947 u=jegan n=ansible INFO| TASK [Start nginx web server] **********************************************************************************************************
+2026-10-08 16:37:42,872 p=225947 u=jegan n=ansible INFO| skipping: [rocky1-jegan]
+2026-10-08 16:37:42,880 p=225947 u=jegan n=ansible INFO| skipping: [rocky2-jegan]
+2026-10-08 16:37:42,881 p=225947 u=jegan n=ansible INFO| PLAY RECAP *****************************************************************************************************************************
+2026-10-08 16:37:42,881 p=225947 u=jegan n=ansible INFO| rocky1-jegan               : ok=7    changed=1    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   
+2026-10-08 16:37:42,881 p=225947 u=jegan n=ansible INFO| rocky2-jegan               : ok=7    changed=1    unreachable=0    failed=0    skipped=4    rescued=0    ignored=0   
+2026-10-08 16:37:42,881 p=225947 u=jegan n=ansible INFO| ubuntu1-jegan              : ok=7    changed=2    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   
+2026-10-08 16:37:42,881 p=225947 u=jegan n=ansible INFO| ubuntu2-jegan              : ok=7    changed=2    unreachable=0    failed=0    skipped=1    rescued=0    ignored=0   

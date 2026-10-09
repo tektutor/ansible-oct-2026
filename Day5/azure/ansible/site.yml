@@ -1,0 +1,55 @@
+---
+- name: Wait until every VM accepts connections
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Wait for SSH or WinRM
+      ansible.builtin.wait_for_connection:
+        timeout: 600
+
+- name: Install software on Ubuntu and RHEL
+  hosts: linux
+  become: true
+  vars:
+    linux_packages:
+      - nginx
+      - git
+      - tree
+      - unzip
+  tasks:
+    - name: Install packages on Ubuntu
+      ansible.builtin.apt:
+        name: "{{ linux_packages }}"
+        state: present
+        update_cache: true
+        lock_timeout: 300
+      when: ansible_os_family == "Debian"
+
+    - name: Install packages on RHEL
+      ansible.builtin.dnf:
+        name: "{{ linux_packages }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Start and enable nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: true
+
+- name: Install software on Windows
+  hosts: windows
+  tasks:
+    - name: Install IIS web server
+      ansible.windows.win_feature:
+        name: Web-Server
+        include_management_tools: true
+        state: present
+
+    - name: Install tools with Chocolatey
+      chocolatey.chocolatey.win_chocolatey:
+        name:
+          - git
+          - 7zip
+          - notepadplusplus
+        state: present

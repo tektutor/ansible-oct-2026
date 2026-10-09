@@ -1,0 +1,22 @@
+---
+# Azure dynamic inventory. The file name must end with "azure_rm.yml".
+plugin: azure.azcollection.azure_rm
+
+# "auto" tries the AZURE_* environment variables first, then the "az login" session.
+auth_source: auto
+
+# Change this to your resource group name.
+include_vm_resource_groups:
+  - RG-CUST-385-U14
+
+# Use the VM name as the inventory host name, for example demo-ubuntu-vm.
+plain_host_names: true
+
+# Skip VMs that are stopped or deallocated.
+exclude_host_filters:
+  - powerstate != 'running'
+
+# Build the "linux" and "windows" groups from the OS type that Azure reports.
+conditional_groups:
+  linux: os_profile.system == 'linux'
+  windows: os_profile.system == 'windows'
