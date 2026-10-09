@@ -70,6 +70,11 @@ python3 -m venv ~/ansible-venv
 source ~/ansible-venv/bin/activate
 
 ansible-galaxy collection install -r ansible/requirements.yml
+
+pip install ansible pywinrm
+hash -r
+ansible-galaxy collection install azure.azcollection
+
 pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements.txt
 ```
 
