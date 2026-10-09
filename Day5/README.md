@@ -159,4 +159,21 @@ Playbook
       - set system host-name {{ inventory_hostname }}
       - set interfaces dummy dum0 address 10.10.10.1/32
       - set interfaces dummy dum0 description ANSIBLE-LAB
+      - set protocols static route 192.168.100.0/24 blackhole
+      save: true
+
+  - name: Verify the resule
+    vyos.vyos.vyos_command:
+      commands:
+      - show interfaces
+      - show ip route static
+    register result
+  - name: Print verification output
+    debug: var=result.stdout_lines
 </pre>
+
+
+Run it
+```
+ansible-playbook -i inventory.ini vyos.yml
+```
