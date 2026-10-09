@@ -99,3 +99,64 @@ grep -A1 include_vm_resource_groups ansible/inventory.azure_rm.yml
 
 ./azure-env.sh ansible-playbook -i inventory.azure_rm.yml install-nginx-playbook.yml
 ```
+
+
+## Lab - VyOS Network Lab
+```
+sudo cp ~/Downloads /var/lib/libvirt/images/vyos.iso
+
+sudo virt-install --name vyos-vm --memory 1024 --vcpus 1 \
+  --disk size=4 --cdrom /var/lib/libvirt/images/vyos.iso \
+  --os-variant debian12 --network network=default --graphics vnc
+```
+
+Open the console with virt-viewer, install with defaults, configure user and password to vyos, reboot.
+
+Configure SSH
+```
+configure
+set interfaces ethernet eth0 address dhpc
+set service ssh port 22
+commit
+save
+exit
+show interfaces
+```
+
+Install the collections
+```
+ansible-galaxy collection install vyos.vyos ansible.netcommon
+pip install ansible-pylibssh
+```
+
+Create inventory.ini
+```
+[routers]
+vyos-vm ansible_host=192.168.122.50
+
+[routers:vars]
+ansible_connection=ansible.netcommon.network_cli
+ansible_network_os=vyos.vyos.vyos
+ansible_user=vyos
+ansible_password=vyos
+ansible_host_key_checking=false
+```
+
+Playbook
+<pre>
+- name: Automate VyOS routers
+  hosts: routers
+  tasks:
+  - name: Collect device facts
+    vyos.vyos.vyos_facts:
+      gather_subset: min
+  - name: Print VyOS version
+    debug: var=ansbile_net_version
+
+  - name: Configure hostname, dummy interface and static route
+    vyos.vyos.vyos_config:
+      lines:
+      - set system host-name {{ inventory_hostname }}
+      - set interfaces dummy dum0 address 10.10.10.1/32
+      - set interfaces dummy dum0 description ANSIBLE-LAB
+</pre>
