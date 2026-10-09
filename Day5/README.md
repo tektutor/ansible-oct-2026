@@ -86,21 +86,16 @@ grep existing_resource_group_name terraform.tfvars
 
 ```
 
-Check the inventory
-```
-./azure-env.sh bash -c 'az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_SECRET" --tenant "$AZURE_TENANT" -o none && az vm list -g <YOUR_RESOURCE_GROUP> -d -o table'
-```
-
 Run the playbook
 ```
-./azure-env.sh bash -c 'az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_SECRET" --tenant "$AZURE_TENANT" -o none && az vm list -g <YOUR_RESOURCE_GROUP> -d -o table'
-
-ANSIBLE_DEPRECATION_WARNINGS=False ./azure-env.sh ansible-inventory -i inventory.azure_rm.yml --graph -vvv 2>&1 | tail -40
 
 sed -i 's/your-resource-group/RG-CUST-385-U14/' ansible/inventory.azure_rm.yml
 grep -A1 include_vm_resource_groups ansible/inventory.azure_rm.yml
 
+
+./azure-env.sh bash -c 'az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_SECRET" --tenant "$AZURE_TENANT" -o none && az vm list -g RG-CUST-385-U14 -d -o table'
+
 ./azure-env.sh ansible-inventory -i inventory.azure_rm.yml --graph
+
 ./azure-env.sh ansible-playbook -i inventory.azure_rm.yml install-nginx-playbook.yml
-./azure-env.sh ansible-playbook -i inventory.azure_rm.yml nginx.yml
 ```
